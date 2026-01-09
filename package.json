@@ -1,0 +1,24 @@
+{
+  "name": "the-virtual-parasite",
+  "version": "1.0.0",
+  "description": "PhD Research Hub - Virtual Parasites Project",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasfortune/the-virtual-parasite.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lucasfortune/the-virtual-parasite/issues"
+  },
+  "homepage": "https://github.com/lucasfortune/the-virtual-parasite#readme",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

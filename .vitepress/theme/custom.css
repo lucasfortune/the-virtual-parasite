@@ -1,0 +1,556 @@
+/**
+ * Physics of Parasitism Design System
+ * Based on ADR-001: Design System and Color Scheme
+ */
+
+/* === Brand Colors (Light Mode - Default) === */
+:root {
+  /* Primary brand colors */
+  --vp-c-brand-1: #EB1F17;        /* accent-primary - Physics of Parasitism Red */
+  --vp-c-brand-2: #C91810;        /* accent-hover */
+  --vp-c-brand-3: #E88A86;        /* accent-muted */
+  --vp-c-brand-soft: rgba(235, 31, 23, 0.14);
+
+  /* Secondary accent (green) */
+  --accent-secondary: #1DA924;
+  --accent-secondary-hover: #168b1c;
+
+  /* Backgrounds */
+  --vp-c-bg: #FFFFFF;
+  --vp-c-bg-soft: #F8F9FA;
+  --vp-c-bg-mute: #E9ECEF;
+  --vp-c-bg-alt: #F8F9FA;
+
+  /* Text */
+  --vp-c-text-1: #343A40;
+  --vp-c-text-2: #6C757D;
+  --vp-c-text-3: #ADB5BD;
+
+  /* Borders */
+  --vp-c-border: #DEE2E6;
+  --vp-c-divider: #E9ECEF;
+  --vp-c-gutter: #E9ECEF;
+
+  /* Semantic colors */
+  --vp-c-success-1: #1DA924;
+  --vp-c-success-2: #28A745;
+  --vp-c-success-3: #9FE2A5;
+  --vp-c-success-soft: rgba(29, 169, 36, 0.14);
+
+  --vp-c-warning-1: #FFC107;
+  --vp-c-warning-2: #E0A800;
+  --vp-c-warning-3: #FFE082;
+  --vp-c-warning-soft: rgba(255, 193, 7, 0.14);
+
+  --vp-c-danger-1: #DC3545;
+  --vp-c-danger-2: #C82333;
+  --vp-c-danger-3: #F5C6CB;
+  --vp-c-danger-soft: rgba(220, 53, 69, 0.14);
+
+  --vp-c-tip-1: #17A2B8;
+  --vp-c-tip-2: #138496;
+  --vp-c-tip-3: #BEE5EB;
+  --vp-c-tip-soft: rgba(23, 162, 184, 0.14);
+}
+
+/* === Dark Mode === */
+.dark {
+  /* Primary brand colors - slightly adjusted for dark mode */
+  --vp-c-brand-1: #EB1F17;
+  --vp-c-brand-2: #FF3B30;
+  --vp-c-brand-3: #E88A86;
+  --vp-c-brand-soft: rgba(235, 31, 23, 0.16);
+
+  /* Secondary accent */
+  --accent-secondary: #28A745;
+  --accent-secondary-hover: #34CE57;
+
+  /* Backgrounds */
+  --vp-c-bg: #1A1A1A;
+  --vp-c-bg-soft: #2D2D2D;
+  --vp-c-bg-mute: #3D3D3D;
+  --vp-c-bg-alt: #2D2D2D;
+
+  /* Text */
+  --vp-c-text-1: #F8F9FA;
+  --vp-c-text-2: #ADB5BD;
+  --vp-c-text-3: #6C757D;
+
+  /* Borders */
+  --vp-c-border: #4D4D4D;
+  --vp-c-divider: #3D3D3D;
+  --vp-c-gutter: #3D3D3D;
+
+  /* Semantic colors - dark mode */
+  --vp-c-success-1: #28A745;
+  --vp-c-success-soft: rgba(40, 167, 69, 0.16);
+
+  --vp-c-warning-1: #FFD93D;
+  --vp-c-warning-soft: rgba(255, 217, 61, 0.16);
+
+  --vp-c-danger-1: #FF6B6B;
+  --vp-c-danger-soft: rgba(255, 107, 107, 0.16);
+
+  --vp-c-tip-1: #4ECDC4;
+  --vp-c-tip-soft: rgba(78, 205, 196, 0.16);
+}
+
+/* === Navbar Styling === */
+
+/* Primary color navbar background */
+.VPNav {
+  background-color: var(--vp-c-brand-1) !important;
+  border-bottom: none !important;
+}
+
+.VPNavBar {
+  background-color: var(--vp-c-brand-1) !important;
+  border-bottom: none !important;
+}
+
+/* Ensure all navbar inner elements have red background */
+.VPNavBar .content,
+.VPNavBar .content-body,
+.VPNavBar .curtain,
+.VPNavBar::before,
+.VPNavBar::after {
+  background-color: var(--vp-c-brand-1) !important;
+  background: var(--vp-c-brand-1) !important;
+}
+
+/* Remove any backdrop blur that might cause white overlay */
+.VPNavBar,
+.VPNavBar .content {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Ensure navbar is above sidebar */
+.VPNav {
+  z-index: 100 !important;
+}
+
+/* Remove any borders/lines from navbar title area */
+.VPNavBarTitle,
+.VPNavBarTitle.has-sidebar,
+.has-sidebar .VPNavBarTitle,
+.VPNavBar.has-sidebar .VPNavBarTitle {
+  border: none !important;
+  border-bottom: none !important;
+  border-bottom-width: 0 !important;
+  border-bottom-style: none !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Force remove border on navbar title on doc pages */
+@media (min-width: 960px) {
+  .VPNavBarTitle.has-sidebar .title {
+    border-bottom: none !important;
+    border-bottom-color: transparent !important;
+  }
+}
+
+.VPNavBarTitle::after,
+.VPNavBarTitle::before {
+  display: none !important;
+}
+
+/* Remove borders from navbar content areas */
+.VPNavBar .content,
+.VPNavBar .content-body {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.VPNavBar .content::after,
+.VPNavBar .content-body::after {
+  display: none !important;
+}
+
+.VPNavBar .divider {
+  display: none;
+}
+
+/* White text for navbar */
+.VPNavBarTitle .title {
+  color: #FFFFFF !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+/* Navbar logo - white color on red background */
+.VPNavBarTitle .logo {
+  color: #FFFFFF;
+  filter: brightness(0) invert(1);
+  height: 28px;
+  width: auto;
+}
+
+/* Navbar menu links */
+.VPNavBarMenuLink {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.VPNavBarMenuLink:hover,
+.VPNavBarMenuLink.active {
+  color: #FFFFFF !important;
+  
+}
+
+.VPNavBarMenuLink:hover { 
+  color: #FFFFFF !important;
+  background-color: var(--vp-c-brand-2);
+}
+
+/* Navbar hamburger menu (mobile) */
+.VPNavBarHamburger .container .top,
+.VPNavBarHamburger .container .middle,
+.VPNavBarHamburger .container .bottom {
+  background-color: #FFFFFF !important;
+}
+
+/* Search button in navbar */
+.VPNavBarSearch .DocSearch-Button {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: #FFFFFF !important;
+}
+
+.VPNavBarSearch .DocSearch-Button:hover {
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.VPNavBarSearch .DocSearch-Button-Keys kbd {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Local search button - white text and icons */
+.VPNavBarSearch button.DocSearch-Button,
+.VPNavBarSearch .VPLocalSearchBox button,
+.VPNavBarSearch button {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.VPNavBarSearch button:hover {
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Search icon */
+.VPNavBarSearch .DocSearch-Search-Icon,
+.VPNavBarSearch button svg,
+.VPNavBarSearch .vpi-search {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+}
+
+/* Search placeholder text */
+.VPNavBarSearch .DocSearch-Button-Placeholder,
+.VPNavBarSearch button span,
+.VPNavBarSearch button .text {
+  color: #FFFFFF !important;
+}
+
+/* Search keyboard shortcut */
+.VPNavBarSearch button kbd,
+.VPNavBarSearch .DocSearch-Button-Key {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: none !important;
+}
+
+/* Command symbol and all kbd content */
+.VPNavBarSearch kbd,
+.VPNavBarSearch kbd *,
+.VPNavBarSearch .DocSearch-Button-Key,
+.VPNavBarSearch [class*="key"],
+.VPNavBarSearch button kbd span {
+  color: #FFFFFF !important;
+  fill: #FFFFFF !important;
+}
+
+/* Force all elements in search area to be white */
+.VPNavBarSearch * {
+  color: #FFFFFF !important;
+  fill: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
+
+/* Theme toggle button */
+.VPNavBarAppearance .VPSwitch {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Social links in navbar */
+.VPNavBarSocialLinks .VPSocialLink {
+  color: #FFFFFF !important;
+}
+
+/* === Custom Component Styles === */
+
+/* Hero section customization */
+.VPHero .name {
+  background: var(--vp-c-brand-1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Hero image - T. brucei icon in primary color */
+.VPHero .VPImage {
+  color: var(--vp-c-brand-1);
+  max-width: 320px;
+  height: auto;
+}
+
+.VPHero .image-container .image-bg {
+  display: none;
+}
+
+/* Button styling - Hero buttons */
+.VPButton.brand,
+.VPHero .VPButton.brand,
+.vp-doc .VPButton.brand {
+  background-color: #EB1F17 !important;
+  border-color: #EB1F17 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.VPButton.brand:hover {
+  background-color: var(--vp-c-brand-2);
+  border-color: var(--vp-c-brand-2);
+}
+
+/* Alt button with green accent */
+.VPButton.alt {
+  border-color: var(--accent-secondary);
+  color: var(--accent-secondary);
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.VPButton.alt:hover {
+  background-color: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+  color: #FFFFFF;
+}
+
+/* Sidebar active state */
+.VPSidebarItem.is-active > .item > .link > .text {
+  color: var(--vp-c-brand-1);
+}
+
+/* Navigation active state */
+.VPNavBarMenuLink.active {
+  color: var(--vp-c-brand-1);
+}
+
+/* Code blocks */
+.vp-code-group .tabs label.active {
+  color: var(--vp-c-brand-1);
+}
+
+/* Custom badges */
+.VPBadge.tip {
+  background-color: var(--vp-c-success-soft);
+  color: var(--vp-c-success-1);
+}
+
+.VPBadge.warning {
+  background-color: var(--vp-c-warning-soft);
+  color: var(--vp-c-warning-1);
+}
+
+.VPBadge.danger {
+  background-color: var(--vp-c-danger-soft);
+  color: var(--vp-c-danger-1);
+}
+
+/* === Custom Page Components === */
+
+/* Feature cards on home page - light grey background */
+.VPFeatures {
+  background-color: var(--vp-c-bg-mute) !important;
+  padding: 2rem 0 !important;
+}
+
+.VPFeature {
+  background-color: var(--vp-c-bg) !important;
+  border: 1px solid var(--vp-c-border);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.VPFeature:hover {
+  border-color: var(--vp-c-brand-3);
+  box-shadow: 0 4px 12px rgba(235, 31, 23, 0.1);
+}
+
+/* Feature icon styling - solid primary color */
+.VPFeature .icon {
+  color: var(--vp-c-brand-1);
+}
+
+.VPFeature .VPImage {
+  width: 48px;
+  height: 48px;
+}
+
+/* Funding section on landing page - light grey background */
+.funding-section {
+  margin-top: 4rem;
+  padding: 2rem;
+  background: var(--vp-c-bg-mute);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.funding-section h2 {
+  margin-bottom: 1.5rem;
+  color: var(--vp-c-text-1);
+}
+
+.logo-row {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin: 2rem 0;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.logo-row img {
+  height: 80px;
+  width: auto;
+  opacity: 0.9;
+  transition: opacity 0.3s;
+}
+
+.logo-row img:hover {
+  opacity: 1;
+}
+
+/* CTA button styling for sub-site pages */
+.launch-cta {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.launch-cta a {
+  display: inline-block;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  background-color: var(--vp-c-brand-1);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.launch-cta a:hover {
+  background-color: var(--vp-c-brand-2);
+  transform: translateY(-2px);
+}
+
+/* Documentation card grid */
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.doc-card {
+  display: block;
+  padding: 1.5rem;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.doc-card:hover {
+  border-color: var(--vp-c-brand-3);
+  box-shadow: 0 4px 12px rgba(235, 31, 23, 0.1);
+}
+
+.doc-card h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--vp-c-text-1);
+  font-size: 1rem;
+}
+
+.doc-card p {
+  margin: 0;
+  color: var(--vp-c-text-2);
+  font-size: 0.875rem;
+}
+
+/* Module table styling */
+.module-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.module-table th,
+.module-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--vp-c-border);
+}
+
+.module-table th {
+  background: var(--vp-c-bg-soft);
+  font-weight: 600;
+}
+
+.module-table tr:hover {
+  background: var(--vp-c-bg-soft);
+}
+
+/* Research section on landing page - light grey background */
+.research-section {
+  margin: 3rem 0;
+  padding: 2rem;
+  background: var(--vp-c-bg-mute);
+  border-radius: 12px;
+  border-left: 4px solid var(--vp-c-brand-1);
+}
+
+.research-section h2 {
+  margin-top: 0;
+  color: var(--vp-c-text-1);
+}
+
+/* Code example styling */
+.code-example {
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .logo-row {
+    gap: 1.5rem;
+  }
+
+  .logo-row img {
+    height: 60px;
+  }
+
+  .doc-grid {
+    grid-template-columns: 1fr;
+  }
+}

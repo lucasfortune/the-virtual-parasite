@@ -1,2 +1,9 @@
 # DEVELOPMENT
 dev/
+
+# Dependencies
+node_modules/
+
+# Build output
+.vitepress/dist/
+.vitepress/cache/
