@@ -7,6 +7,9 @@ export default defineConfig({
   // Base URL for GitHub Pages deployment
   base: '/the-virtual-parasite/',
 
+  // Enable dark mode toggle (defaults based on system, but we override in head script)
+  appearance: true,
+
   // Source directory containing content
   srcDir: '.',
 
@@ -46,7 +49,16 @@ export default defineConfig({
 
   // Head tags
   head: [
-    ['link', { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
+    ['link', { rel: 'icon', href: '/the-virtual-parasite/favicon.svg', type: 'image/svg+xml' }],
+    // Default to light mode unless user explicitly chose dark
+    ['script', {}, `
+      (function() {
+        const stored = localStorage.getItem('vitepress-theme-appearance');
+        if (stored !== 'dark') {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    `],
     ['meta', { name: 'theme-color', content: '#EB1F17' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'Virtual Parasites Research Hub' }],
