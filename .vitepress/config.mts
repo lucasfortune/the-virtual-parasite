@@ -26,14 +26,18 @@ export default defineConfig({
     'src/workspace/index.md': 'workspace/index.md',
     'src/autostructn2v/index.md': 'autostructn2v/index.md',
 
-    // Workspace custom content - tutorials
-    'src/workspace/tutorials/index.md': 'workspace/tutorials/index.md',
-    'src/workspace/tutorials/getting-started.md': 'workspace/tutorials/getting-started.md',
-    'src/workspace/tutorials/first-segmentation.md': 'workspace/tutorials/first-segmentation.md',
-    'src/workspace/tutorials/denoising-workflow.md': 'workspace/tutorials/denoising-workflow.md',
-
     // Workspace custom content - guides
     'src/workspace/guides/index.md': 'workspace/guides/index.md',
+    'src/workspace/guides/getting-started.md': 'workspace/guides/getting-started.md',
+    'src/workspace/guides/segmentation-module.md': 'workspace/guides/segmentation-module.md',
+    'src/workspace/guides/deep-learning-denoising.md': 'workspace/guides/deep-learning-denoising.md',
+    'src/workspace/guides/filter-denoising.md': 'workspace/guides/filter-denoising.md',
+    'src/workspace/guides/annotation-module.md': 'workspace/guides/annotation-module.md',
+    'src/workspace/guides/image-viewer.md': 'workspace/guides/image-viewer.md',
+    'src/workspace/guides/mesh-creation.md': 'workspace/guides/mesh-creation.md',
+    'src/workspace/guides/3d-visualization.md': 'workspace/guides/3d-visualization.md',
+    'src/workspace/guides/file-browser.md': 'workspace/guides/file-browser.md',
+    'src/workspace/guides/info-help.md': 'workspace/guides/info-help.md',
     'src/workspace/guides/best-practices.md': 'workspace/guides/best-practices.md',
 
     // AutoStructN2V custom content - examples
@@ -91,25 +95,25 @@ export default defineConfig({
           ]
         },
         {
-          text: 'Tutorials',
+          text: 'Guides',
           collapsed: false,
           items: [
-            { text: 'Overview', link: '/workspace/tutorials/' },
-            { text: 'Getting Started', link: '/workspace/tutorials/getting-started' },
-            { text: 'First Segmentation', link: '/workspace/tutorials/first-segmentation' },
-            { text: 'Denoising Workflow', link: '/workspace/tutorials/denoising-workflow' },
-          ]
-        },
-        {
-          text: 'Guides',
-          collapsed: true,
-          items: [
             { text: 'Overview', link: '/workspace/guides/' },
+            { text: 'Getting Started', link: '/workspace/guides/getting-started' },
+            { text: 'Segmentation Module', link: '/workspace/guides/segmentation-module' },
+            { text: 'DL Denoising Module', link: '/workspace/guides/deep-learning-denoising' },
+            { text: 'Filter Denoising Module', link: '/workspace/guides/filter-denoising' },
+            { text: 'Annotation Module', link: '/workspace/guides/annotation-module' },
+            { text: 'Image Viewer Module', link: '/workspace/guides/image-viewer' },
+            { text: 'Mesh Creation Module', link: '/workspace/guides/mesh-creation' },
+            { text: '3D Visualization Module', link: '/workspace/guides/3d-visualization' },
+            { text: 'File Browser', link: '/workspace/guides/file-browser' },
+            { text: 'Info & Help', link: '/workspace/guides/info-help' },
             { text: 'Best Practices', link: '/workspace/guides/best-practices' },
           ]
         },
         {
-          text: 'Modules',
+          text: 'Documentation',
           collapsed: false,
           items: [
             {

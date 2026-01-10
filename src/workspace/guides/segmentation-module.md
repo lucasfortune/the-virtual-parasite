@@ -1,9 +1,9 @@
 ---
 layout: doc
-title: Your First Segmentation
+title: Segmentation Module
 ---
 
-# Your First Segmentation
+# Segmentation Module
 
 ::: warning Work in Progress
 This tutorial is currently being written. Check back soon for the complete guide.

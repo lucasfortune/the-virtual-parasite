@@ -1,9 +1,9 @@
 ---
 layout: doc
-title: Denoising Workflow
+title: Deep Learning Denoising
 ---
 
-# Denoising Workflow
+# Deep Learning Denoising
 
 ::: warning Work in Progress
 This tutorial is currently being written. Check back soon for the complete guide.
