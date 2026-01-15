@@ -540,6 +540,43 @@
   overflow: hidden;
 }
 
+/* === Documentation Screenshot Images === */
+
+/* Add subtle border to images in documentation content */
+.vp-doc img {
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+}
+
+/* Dark mode - slightly lighter border for better visibility */
+.dark .vp-doc img {
+  border-color: var(--vp-c-border);
+}
+
+/* Image captions - italic text immediately following an image */
+.vp-doc p:has(> img) + p > em:only-child,
+.vp-doc p > img + br + em,
+.vp-doc img + em {
+  display: block;
+  color: var(--vp-c-text-2);
+  font-size: 0.875rem;
+  font-style: italic;
+  text-align: left;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Caption styling when it's in its own paragraph after image */
+.vp-doc p:has(> img) + p:has(> em:only-child) {
+  text-align: center;
+  margin-top: -0.5rem;
+}
+
+.vp-doc p:has(> img) + p > em:only-child {
+  color: var(--vp-c-text-2);
+  font-size: 0.875rem;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .logo-row {
