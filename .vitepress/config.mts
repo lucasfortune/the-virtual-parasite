@@ -14,7 +14,7 @@ export default defineConfig({
   srcDir: '.',
 
   // Exclude development files from build
-  srcExclude: ['**/dev/**', '**/node_modules/**', '**/.vitepress/**', '**/README.md'],
+  srcExclude: ['**/dev/**', '**/node_modules/**', '**/.vitepress/**', '**/README.md', '**/docs/user_guides/**'],
 
   // Clean URLs (no .html extension)
   cleanUrls: true,
