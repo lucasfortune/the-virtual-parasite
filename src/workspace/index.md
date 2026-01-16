@@ -46,24 +46,19 @@ Convert segmented image stacks into 3D surface meshes for visualization, analysi
 
 <div class="doc-grid">
 
-<a href="/workspace/tutorials/getting-started" class="doc-card">
+<a href="./guides/" class="doc-card">
+  <h3>Overview</h3>
+  <p>Step-by-step guides and best practices</p>
+</a>
+
+<a href="./guides/getting-started" class="doc-card">
   <h3>Getting Started</h3>
-  <p>Your first steps with the workspace</p>
+  <p>Welcome to the Biomedical Image Processing Workspace.</p>
 </a>
 
-<a href="/workspace/tutorials/" class="doc-card">
-  <h3>Tutorials</h3>
-  <p>Step-by-step guides to common workflows</p>
-</a>
-
-<a href="/workspace/guides/" class="doc-card">
-  <h3>Guides</h3>
-  <p>Best practices and advanced topics</p>
-</a>
-
-<a href="/workspace/docs/modules/segmentation/_module" class="doc-card">
-  <h3>Segmentation Docs</h3>
-  <p>Train U-Net models for semantic segmentation</p>
+<a href="./guides/info-help" class="doc-card">
+  <h3>Info & Help Panel</h3>
+  <p>Find the information you need directly in the Workspace</p>
 </a>
 
 </div>

@@ -18,13 +18,13 @@ hero:
 
 features:
   - icon:
-      src: /icon-segmentation.svg
-    title: Semantic Segmentation
-    details: Deep learning workflows for pixel-level annotation of electron tomography volumes using U-Net architecture
-  - icon:
       src: /icon-denoising.svg
     title: Advanced Denoising
     details: Self-supervised methods that handle both random and structured noise patterns in microscopy data
+  - icon:
+      src: /icon-segmentation.svg
+    title: Semantic Segmentation
+    details: Deep learning workflows for pixel-level annotation of electron tomography volumes using U-Net architecture
   - icon:
       src: /icon-3d-model.svg
     title: 3D Structural Models
@@ -53,8 +53,8 @@ In this project, we build **"virtual parasites"** from high-resolution image dat
 
 A web-based platform bringing advanced machine learning and image analysis to researchers without requiring programming expertise. Features include:
 
-- **U-Net Segmentation** - Train deep learning models for semantic segmentation
 - **Self-Supervised Denoising** - Noise2Void and autoStructN2V methods
+- **U-Net Segmentation** - Train deep learning models for semantic segmentation
 - **3D Mesh Generation** - Convert segmentations to polygon meshes
 - **Interactive Visualization** - Explore results in 3D
 
@@ -65,7 +65,7 @@ A web-based platform bringing advanced machine learning and image analysis to re
 A Python module extending Noise2Void to handle structured noise patterns commonly found in microscopy images. Key features:
 
 - **Two-Stage Pipeline** - Handles both random and structured noise
-- **Automatic Pattern Discovery** - No manual mask creation required
+- **Automatic Noise Analysis** - No manual mask creation required
 - **Flexible Architecture** - Configurable U-Net with resize convolution
 
 [View Documentation](/autostructn2v/)
