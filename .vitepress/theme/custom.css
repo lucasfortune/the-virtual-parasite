@@ -404,6 +404,11 @@
   height: 48px;
 }
 
+/* Feature icons white in dark mode */
+.dark .VPFeature .VPImage {
+  filter: brightness(0) invert(1);
+}
+
 /* Funding section on landing page - light grey background */
 .funding-section {
   margin-top: 4rem;
