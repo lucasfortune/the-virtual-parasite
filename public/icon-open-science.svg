@@ -1,21 +1,129 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="currentColor">
-  <!-- Open Science icon - globe with connected nodes -->
-  <!-- Globe circle -->
-  <circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="3" fill="none"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
 
-  <!-- Globe latitude lines -->
-  <ellipse cx="32" cy="32" rx="20" ry="8" stroke="currentColor" stroke-width="2" fill="none"/>
-  <ellipse cx="32" cy="32" rx="8" ry="20" stroke="currentColor" stroke-width="2" fill="none"/>
-
-  <!-- Connected nodes around globe (sharing/collaboration) -->
-  <circle cx="10" cy="16" r="4" fill="currentColor"/>
-  <circle cx="54" cy="20" r="4" fill="currentColor"/>
-  <circle cx="52" cy="48" r="4" fill="currentColor"/>
-  <circle cx="12" cy="50" r="4" fill="currentColor"/>
-
-  <!-- Connection lines -->
-  <path d="M14 18 L18 24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  <path d="M50 22 L46 26" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  <path d="M48 46 L44 42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  <path d="M16 48 L20 44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-</svg>
+<svg
+   width="12.7mm"
+   height="12.7mm"
+   viewBox="0 0 12.7 12.7"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs1" /><g
+     id="layer1"
+     transform="translate(-85.989578,-187.52344)"><g
+       style="fill:currentColor"
+       id="g1"
+       transform="matrix(0.26458333,0,0,0.26458333,107.42083,171.45)"><path
+         d="m 12.700761,25.051142 19.999999,-10.248098 20,10.072907 v 23.153425 l -20,10.773668 -19.999999,-10.861263 z"
+         stroke="currentColor"
+         stroke-width="3"
+         fill="none"
+         stroke-linejoin="round"
+         id="path1" /><path
+         d="M 12.242894,24.845583 32.60858,36.368264 52.302613,25.084458"
+         stroke="currentColor"
+         stroke-width="2"
+         fill="none"
+         opacity="0.5"
+         id="path3" /><path
+         d="M 32.613166,36.485158 V 58.627854"
+         stroke="currentColor"
+         stroke-width="1.92105"
+         fill="none"
+         opacity="0.5"
+         id="path4" /><circle
+         cx="32.634651"
+         cy="36.136703"
+         r="3"
+         fill="currentColor"
+         id="circle4" /><circle
+         cx="32.433731"
+         cy="58.512608"
+         r="3"
+         fill="currentColor"
+         id="circle5" /><circle
+         cx="52.54792"
+         cy="48.217915"
+         r="3"
+         fill="currentColor"
+         id="circle6" /><circle
+         cx="52.680321"
+         cy="24.985104"
+         r="3"
+         fill="currentColor"
+         id="circle7" /><circle
+         cx="13.079363"
+         cy="47.890263"
+         r="3"
+         fill="currentColor"
+         id="circle8" /><circle
+         cx="32.699554"
+         cy="14.745164"
+         r="3"
+         fill="currentColor"
+         id="circle9" /><circle
+         cx="13.323754"
+         cy="25.305929"
+         r="3"
+         fill="currentColor"
+         id="circle10" /><g
+         style="fill:currentColor"
+         id="g2"
+         transform="translate(-88.999988,52.750001)"><circle
+           cx="32"
+           cy="32"
+           r="20"
+           stroke="currentColor"
+           stroke-width="3"
+           fill="none"
+           id="circle1" /><ellipse
+           cx="32"
+           cy="32"
+           rx="20"
+           ry="8"
+           stroke="currentColor"
+           stroke-width="2"
+           fill="none"
+           id="ellipse1" /><ellipse
+           cx="32"
+           cy="32"
+           rx="8"
+           ry="20"
+           stroke="currentColor"
+           stroke-width="2"
+           fill="none"
+           id="ellipse2" /><circle
+           cx="12"
+           cy="12"
+           r="4"
+           fill="currentColor"
+           id="circle2" /><circle
+           cx="52"
+           cy="12"
+           r="4"
+           fill="currentColor"
+           id="circle3" /><circle
+           cx="52"
+           cy="52"
+           r="4"
+           fill="currentColor"
+           id="circle4-0" /><circle
+           cx="12"
+           cy="52"
+           r="4"
+           fill="currentColor"
+           id="circle5-2" /><path
+           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.88976;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.6;stroke-dasharray:none;stroke-opacity:1"
+           d="M 12.862158,51.190572 20.81288,43.23985"
+           id="path10" /><path
+           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.88976;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.6;stroke-dasharray:none;stroke-opacity:1"
+           d="m 43.170673,21.298163 7.950722,-7.950722"
+           id="path10-1" /><path
+           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.88976;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.6;stroke-dasharray:none;stroke-opacity:1"
+           d="M 20.936549,20.896365 12.985827,12.945643"
+           id="path10-1-2" /><path
+           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.88976;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.6;stroke-dasharray:none;stroke-opacity:1"
+           d="M 50.786881,50.846261 42.836159,42.895539"
+           id="path10-1-2-7" /></g></g></g></svg>
