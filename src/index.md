@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "Virtual Parasites"
   text: "Data-Driven Mechanical Models"
-  tagline: Building high-resolution structural models of T. brucei for understanding parasite biophysics
+  tagline: Building high-resolution structural models of parasites to understand their biophysics
   image:
     src: /tbrucei-icon-main.svg
     alt: T. brucei parasite
