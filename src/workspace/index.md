@@ -8,8 +8,8 @@ title: BioMed Workspace
 A web-based platform for biomedical image processing that brings advanced machine learning to researchers without requiring programming expertise.
 
 <div class="launch-cta">
-  <a href="#" target="_blank">
-    Launch Workspace (Coming Soon)
+  <a href="https://www.thevirtualparasite.net/" target="_blank">
+    Launch Workspace
   </a>
 </div>
 
