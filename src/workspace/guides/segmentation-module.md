@@ -84,7 +84,7 @@ Expand the **Use Pretrained Model** section to import an existing model:
 
 *This step is only shown for the Train from Scratch workflow.*
 
-Configure how your model will be trained. Default values work well for most cases.
+Configure how your model will be trained. Default values work well for most cases. Fields are validated in real time — in particular, patch size is checked against your image dimensions and the chosen number of layers. See [Training Configuration](/workspace/docs/modules/segmentation/step2).
 
 ![Step 2 Configuration](/guides/segmentation-step2.png)
 *Training configuration with dataset, architecture, and training parameters*
@@ -174,6 +174,8 @@ Apply your trained (or imported) model to segment new data. See [Inference Overv
 2. Select a TIFF stack from your workspace or upload a new one
 3. The data should be similar to your training images (same modality, resolution)
 
+> **Dimension requirement:** each slice is segmented whole (no patch tiling), so the smallest slice dimension must be between 32 and 4096 pixels **and divisible by 2^layers** (e.g. 16 for a 4-layer model). The module runs a pre-flight check and shows a warning banner if a stack is incompatible.
+
 For data requirements, see [Inference Data](/workspace/docs/modules/segmentation/step4-inference-data).
 
 #### Run Segmentation
@@ -199,8 +201,8 @@ The Segmentation module saves files to your workspace:
 
 | Workflow | Output Location | Files |
 |----------|-----------------|-------|
-| **Training** | `models/<session>/<training-id>/` | `best_model.pth`, `config.json`, `results.json` |
-| **Inference** | `results/<inference-id>/` | Segmented TIFF stack, metadata JSON |
+| **Training** | `models/segmentation/` (per job) | `best_model.pth`, `config.json`, `results.json` |
+| **Inference** | `results/segmentation/` (per job) | Segmented TIFF stack, metadata JSON |
 
 These files appear in your workspace file browser after processing completes.
 
@@ -214,6 +216,7 @@ These files appear in your workspace file browser after processing completes.
 | Training loss not decreasing | Learning rate too high or data issue | Try reducing learning rate; verify annotations are correct |
 | Poor segmentation quality | Insufficient training data or epochs | Add more training data or increase epoch count |
 | "Model file invalid" error | Incompatible model architecture | Ensure model and config files are from the same training session |
+| Pre-flight dimension warning | Slice size not divisible by 2^layers | Crop or downscale the stack in the Preprocessing module first |
 | Inference very slow | Large image stack | This is normal; processing is slice-by-slice |
 
 ---
@@ -232,6 +235,7 @@ These files appear in your workspace file browser after processing completes.
 - [Config File](/workspace/docs/modules/segmentation/step1-config-file)
 
 ### Step 2: Configuration
+- [Training Configuration](/workspace/docs/modules/segmentation/step2)
 - [Patch Size](/workspace/docs/modules/segmentation/config-patch-size)
 - [Patches per Image](/workspace/docs/modules/segmentation/config-patches-per-image)
 - [Batch Size](/workspace/docs/modules/segmentation/config-batch-size)

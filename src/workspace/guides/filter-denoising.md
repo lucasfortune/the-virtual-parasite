@@ -251,3 +251,6 @@ The output file:
 - [Gaussian Filter](/workspace/docs/modules/denoising-filter/step2-gaussian) — Gaussian parameters explained
 - [Non-Local Means](/workspace/docs/modules/denoising-filter/step2-nlm) — NLM parameters explained
 
+**Processing:**
+- [Processing & Results](/workspace/docs/modules/denoising-filter/step3) — Running the filter and opening the output
+

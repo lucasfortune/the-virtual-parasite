@@ -103,10 +103,12 @@ The system validates this automatically and rejects mismatched pairs.
 
 ### Minimum Requirements
 
-| Mode | Minimum Slices |
-|------|----------------|
-| **2D** | 10 slices |
-| **2.5D** | 20 slices |
+| Requirement | Value |
+|-------------|-------|
+| **Slices** | At least 10 |
+| **Slice size** | At least 64×64 pixels |
+
+Training is always 2D (slice by slice). For autoStructN2V, images should also contain some background (resin, embedding medium, or empty areas) — that is where the noise is measured.
 
 ### Noise Matching
 
@@ -123,14 +125,13 @@ For best denoising results:
 
 ### Method Selection
 
-| Noise Type | Recommended Method |
-|------------|-------------------|
-| Random speckle noise | N2V |
-| Poisson (shot) noise | N2V |
-| Gaussian noise | N2V |
-| Horizontal/vertical scan lines | autoStructN2V |
-| Periodic stripe artifacts | autoStructN2V |
-| Camera fixed patterns | autoStructN2V |
+| Situation | Recommended Method |
+|-----------|-------------------|
+| Scan lines, streaks, periodic artifacts, fixed patterns | autoStructN2V |
+| Not sure what your noise looks like | autoStructN2V — the router falls back to plain N2V if no usable structure is found |
+| Certain the noise is random (Gaussian, Poisson) and you want to skip measurement | N2V |
+
+When autoStructN2V routes to plain N2V, that is an informative result, not an error. See [Routing Decision](/workspace/docs/modules/denoising-dl/routing-decision).
 
 ---
 
@@ -138,7 +139,7 @@ For best denoising results:
 
 ### Parameter Recommendations
 
-Start with these values and adjust based on your results:
+For **U-Net segmentation**, start with these values and adjust based on your results:
 
 | Parameter | Recommended | Notes |
 |-----------|-------------|-------|
@@ -147,6 +148,8 @@ Start with these values and adjust based on your results:
 | **Epochs** | 100 | Early stopping will end training if converged |
 | **Augmentation** | Enabled | Disable only if image orientation is critical |
 | **Learning Rate** | Default | Start with preset values |
+
+For **DL denoising**, rely on the presets: **Balanced** is the validated publication recipe. The branch defaults differ on purpose (for example, the StructN2V branch keeps augmentation off so flips and rotations don't break the mask's alignment with the directional noise) — see the [DL Denoising guide](/workspace/guides/deep-learning-denoising).
 
 ### Monitoring Training Progress
 
@@ -270,7 +273,7 @@ Keep your workspace running smoothly:
 | **Out of memory** | Batch size too large | Reduce batch size |
 | **Session expired** | Inactivity timeout | Log in again, restore from backup |
 | **Slow processing** | Large images | Normal behavior; wait for completion |
-| **Denoising not effective** | Wrong method for noise type | Try N2V ↔ autoStructN2V |
+| **Denoising not effective** | Structured noise handled as random, or wrong Background Side | Use autoStructN2V and check the routing decision; verify the Background Side setting |
 
 ---
 

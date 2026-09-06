@@ -5,7 +5,7 @@ title: Image Viewer Module Guide
 
 # Image Viewer Module Guide
 
-The Image Viewer module lets you browse and inspect TIFF image stacks with two viewing modes: a detailed gallery view for examining individual slices, and a thumbnail grid for quick navigation through the entire stack.
+The Image Viewer module lets you browse and inspect TIFF image stacks with two viewing modes: a detailed gallery view for examining individual slices, and a thumbnail grid for quick navigation through the entire stack. You can also compare two to four stacks side by side with a shared slice slider, zoom, and pan.
 
 For a conceptual overview, see [Image Viewer](/workspace/docs/modules/imageviewer/_module).
 
@@ -18,8 +18,9 @@ For a conceptual overview, see [Image Viewer](/workspace/docs/modules/imageviewe
 
 1. **Launch module** — Click "Image Viewer" from the workspace hub
 2. **Select a file** — Choose a TIFF stack from your workspace or module results
-3. **Browse slices** — Use the slider or Previous/Next buttons to navigate
-4. **Switch modes** — Toggle between Gallery and Thumbnail views
+3. **Optionally compare** — Add up to four validated stacks to the comparison list
+4. **Browse slices** — Use the slider, Previous/Next buttons, or arrow keys to navigate
+5. **Switch modes** — Toggle between Gallery and Thumbnail views
 
 ---
 
@@ -63,6 +64,13 @@ After selecting a file, the validation display shows:
 
 > **Note:** The "Next" button is disabled until a valid file is selected and validated.
 
+#### Comparing Stacks
+
+To compare stacks side by side, select a validated file and click **Add selected to comparison**. Repeat to build a list of two to four stacks — each entry shows its name, dimensions, and slice count, with an × to remove it.
+
+- With two or more stacks listed, the Next button reads **"Next: Compare N Stacks"** and opens the comparison view
+- Leave the list empty (or with one stack) to view a single stack normally
+
 For more details, see [Image Stack Selection](/workspace/docs/modules/imageviewer/step1-image-stack).
 
 **Click "Next: View Image" to proceed to Step 2.**
@@ -98,29 +106,27 @@ Gallery mode displays a single slice at full resolution with zoom and pan capabi
 
 | Control | Action |
 |---------|--------|
-| **◀ Previous** | Go to previous slice |
-| **Next ▶** | Go to next slice |
-| **Slice Indicator** | Shows current position (e.g., "25/100") |
+| **◀ Previous / Next ▶** | Step through slices |
+| **Left/Right arrow keys** | Step through slices |
+| **Numeric slice field** | Jump to a specific slice (1-based) |
+| **Slice Indicator** | Shows current position (e.g., "25 / 100") |
 | **Slider** | Drag to jump to any slice |
 
 **Zoom Controls**
 
 | Control | Action |
 |---------|--------|
-| **− (Minus)** | Zoom out by 25% |
-| **+ (Plus)** | Zoom in by 25% |
-| **Reset** | Return to 100% zoom, centered |
-| **Zoom Display** | Shows current zoom level (25% – 400%) |
-| **Mouse Wheel** | Scroll up to zoom in, scroll down to zoom out |
+| **Zoom in / out buttons** | Step zoom in 1.25× increments |
+| **Mouse Wheel** | Zoom toward the cursor |
+| **Fit to view** | Reset the zoom and re-center |
+| **Actual size** | Set the served slice image to 1:1 |
+| **Zoom range** | 10% – 1000% |
 
 **Panning**
 
-When zoomed in beyond 100%:
-- **Click and drag** the image to pan around
-- Cursor changes to a grab hand to indicate panning is available
-- Panning is disabled at 100% zoom or below
+- **Drag** with the left or middle mouse button, or hold **Space** and drag, to move around the image
 
-> **Tip:** Use the mouse wheel to quickly zoom in on areas of interest, then click and drag to pan around the image.
+> **Tip:** Use the mouse wheel to quickly zoom in on areas of interest, then drag to pan around the image.
 
 #### Thumbnail Mode
 
@@ -138,6 +144,15 @@ Thumbnail mode displays all slices as a scrollable grid of previews.
 
 > **Tip:** Use Thumbnail mode to get an overview of your entire stack, then click a slice to examine it in detail in Gallery mode.
 
+#### Comparison Mode
+
+When you added two or more stacks in Step 1, the viewer shows them together:
+
+- **Gallery** — one pane per stack, all driven by one shared slice slider, zoom, and pan, so the same z position and view stay aligned across stacks. A shorter stack clamps to its last slice and shows an "end of stack" badge.
+- **Thumbnails** — a table with one column per stack and one row per slice index, so the same depth lines up across stacks. Click a cell to open that slice in the comparison gallery.
+
+The toolbar shows "Comparing N stacks" instead of a single filename.
+
 For more details, see [Viewer Controls](/workspace/docs/modules/imageviewer/step2-ui-controls).
 
 ---
@@ -146,8 +161,9 @@ For more details, see [Viewer Controls](/workspace/docs/modules/imageviewer/step
 
 | Input | Action | Mode |
 |-------|--------|------|
-| **Mouse Wheel** | Zoom in/out | Gallery |
-| **Click + Drag** | Pan (when zoomed > 100%) | Gallery |
+| **Mouse Wheel** | Zoom toward cursor | Gallery |
+| **Left/Middle Drag or Space + Drag** | Pan | Gallery |
+| **Left/Right Arrow Keys** | Previous/next slice | Gallery |
 | **Click Thumbnail** | Open slice in Gallery mode | Thumbnail |
 | **Drag Slider** | Jump to slice | Gallery |
 

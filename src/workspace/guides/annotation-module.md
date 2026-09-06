@@ -49,6 +49,8 @@ Choose your source image and annotation mode.
 
 > **Tip:** Large files work but may affect performance. Consider splitting very large stacks.
 
+> **Note (Resume/Edit):** both modes need the original image behind the annotation. The tool finds it automatically through the file's lineage; when it can't (an uploaded mask with no lineage, or a deleted source), a picker appears — the image you pick must match the annotation's width, height, and slice count.
+
 For more details, see [Source Image](/workspace/docs/modules/annotation/step1-source-image).
 
 **Click "Next" to proceed to the annotation interface.**
@@ -212,23 +214,25 @@ Undo and redo your painting actions on the current slice.
 
 ### Saving Your Work
 
+Both save actions become available after your first stroke.
+
 #### Save Progress
 
-Save your work-in-progress to continue later.
+Save your work-in-progress (WIP) to continue later.
 
 - **Button:** "Save Progress" (in header)
-- **Status:** Marked as "in progress"
-- **Location:** Saved to `unfinished_annotations/` folder
-- **Resume:** Select "Resume" in Step 1 to continue
+- **Resume:** the WIP file appears under "Unfinished annotations" in Step 1's source selector; further saves keep updating the same file
 
 #### Create Annotation
 
 Finalize your annotation for use in training or mesh generation.
 
 - **Button:** "Create Annotation" (in header)
-- **Status:** Marked as "complete"
-- **Location:** Saved to `annotations/` folder
-- **Use:** Ready for Segmentation training or Mesh generation
+- **Use:** ready for Segmentation training, Segmentation Cleanup, or Mesh generation
+- If no pixels have been painted, a confirmation is asked before creating an empty annotation
+- In **Edit** mode, saving never overwrites the original — it creates a new file
+
+> **Note:** leaving the module or closing the tab with unsaved changes asks for confirmation first.
 
 #### Autosave
 
@@ -263,10 +267,10 @@ Automatic saving protects against data loss.
 
 ## Output Files
 
-| File | Description | Location |
-|------|-------------|----------|
-| `annotation.tif` | Multi-page TIFF with class labels as pixel values | annotations/ or unfinished_annotations/ |
-| `annotation.json` | Metadata including class definitions and source info | Same as TIFF |
+| File | Description |
+|------|-------------|
+| Final annotation | Multi-page TIFF with class labels as pixel values, tagged as an annotation — accepted by Segmentation, Segmentation Cleanup, Mesh Generation, and Stitching |
+| Work-in-progress file | Saved by "Save Progress"/autosave; listed under "Unfinished annotations" in Step 1 |
 
 **TIFF Format:**
 - 8-bit grayscale
@@ -284,7 +288,7 @@ Automatic saving protects against data loss.
 | Undo not working | No actions to undo on this slice | Undo history is per-slice; may need to check other slices |
 | Changes not saving | Network error or autosave disabled | Click "Save Progress" manually; check console for errors |
 | Image not loading | File too large or invalid format | Try a smaller file or check TIFF format |
-| Lost my work | Browser closed without saving | Check unfinished_annotations/ for autosaved progress |
+| Lost my work | Browser closed without saving | Check "Unfinished annotations" in Step 1 for autosaved progress |
 
 ---
 

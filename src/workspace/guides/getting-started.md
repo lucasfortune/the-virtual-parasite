@@ -11,12 +11,15 @@ Welcome to the Biomedical Image Processing Workspace. This guide walks you throu
 
 The workspace provides a complete environment for biomedical image analysis:
 
-- **Segmentation** — Train U-Net models to identify structures in microscopy images
-- **Denoising** — Remove noise using deep learning (N2V, autoStructN2V) or filters
+- **Image Viewing** — Browse and inspect TIFF stacks
+- **Preprocessing** — Crop, trim, downscale, and intensity-adjust stacks before processing
+- **Denoising** — Remove noise using deep learning (auto-routed autoStructN2V, N2V) or filters
 - **Annotation** — Create training data with brush-based labeling tools
+- **Segmentation** — Train U-Net models to identify structures in microscopy images
+- **Segmentation Cleanup** — Correct and quantify segmentations in an integrated editor
+- **Stack Stitching** — Join stacks in z or as mosaics with reusable recipes
 - **Mesh Generation** — Convert segmentation results to 3D surface meshes
 - **Visualization** — Explore 3D meshes interactively
-- **Image Viewing** — Browse and inspect TIFF stacks
 
 ---
 
@@ -155,10 +158,13 @@ Each card contains:
 
 | Module | Description |
 |--------|-------------|
-| **U-Net Segmentation** | Train models and segment images |
+| **Image Viewer** | Browse TIFF stacks in gallery or thumbnail view |
+| **Preprocessing** | Crop, trim, flip/rotate, downscale, and adjust intensity |
 | **Denoising** | Remove noise (offers two options: Deep Learning or Filter-Based) |
 | **Quick Annotation Tool** | Create training annotations with brush tools |
-| **Image Viewer** | Browse TIFF stacks in gallery or thumbnail view |
+| **U-Net Segmentation** | Train models and segment images |
+| **Segmentation Cleanup** | Paint corrections, automated cleanup, and quantification |
+| **Stack Stitching** | Join stacks into one volume with reusable recipes |
 | **Surface Mesh Generation** | Convert segmentation to 3D meshes |
 | **3D Visualization** | Interactive mesh viewer |
 

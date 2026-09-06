@@ -234,6 +234,8 @@ On smaller screens (< 768px):
 ## Related Help Articles
 
 - [Getting Started](/workspace/guides/getting-started) — Overview of the workspace
+- [Workspace Basics](/workspace/docs/workspace-basics) — The hub, sidebar, theme toggle, and help panel
+- [Getting Started with Help](/workspace/docs/getting-started) — The in-app help introduction article
 - [Segmentation](/workspace/docs/modules/segmentation/_module) — Main segmentation module overview
 - [DL Denoising](/workspace/docs/modules/denoising-dl/_module) — Deep learning denoising overview
 

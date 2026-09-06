@@ -74,9 +74,9 @@ Below the user info, you'll find workspace controls and statistics:
 #### Download Workspace Button
 
 Click this button to export your entire workspace:
-- Creates a ZIP archive of all your files
-- Includes uploads, results, and models
-- Excludes cache directories (thumbnails, slices)
+- Creates a ZIP archive named `workspace_<timestamp>.zip` with all your files
+- Includes uploads, results, and models with folder structure preserved
+- Excludes cache directories (`.thumbnails`, `.slices`, `.mesh-previews`, `.preprocess`, `.segcleanup`) — all regenerated automatically after a restore
 - Useful for backup or transferring to another session
 
 > **Tip:** Export your workspace before major experiments to create a restore point.
@@ -109,11 +109,12 @@ Click the category dropdown and choose from:
 
 | Category | Accepted Files | Purpose |
 |----------|----------------|---------|
-| **Raw Images** | `.tif`, `.tiff` | Training data or inference input images |
-| **Annotations** | `.tif`, `.tiff` | Segmentation masks/labels for training |
-| **Inference Data** | `.tif`, `.tiff` | Images to run inference on |
+| **Raw Images** | `.tif`, `.tiff`, `.mrc` | Source stacks for denoising, annotation, segmentation, or inference |
+| **Annotations** | `.tif`, `.tiff`, `.mrc` | Segmentation masks/labels for training |
 | **Model Files** | `.pth`, `.json` | Pre-trained model weights and config |
 | **Restore Workspace** | `.zip` | Restore a previously exported workspace |
+
+> **Note:** There is no separate inference category — images you want to run inference on are uploaded as Raw Images. MRC volumes are accepted wherever TIFFs are and can be worked with the same way.
 
 **Step 2: Upload Files**
 
@@ -161,14 +162,22 @@ Files are organized in a hierarchical folder structure:
 
 ```
 uploads/
-  ├── raw/           → Raw image stacks
-  └── annotations/   → Annotation masks
-results/
-  ├── segmentation/  → Segmentation outputs
-  └── denoised/      → Denoised images
+  ├── raw/              → Raw image stacks (TIFF/MRC)
+  ├── annotations/      → Training masks
+  └── imported_models/  → External models you upload
 models/
-  └── [session]/     → Trained models
+  ├── segmentation/     → Trained segmentation models (per job)
+  └── denoising/        → Trained denoising models (per job)
+results/
+  ├── segmentation/     → Segmentation outputs
+  ├── denoising/        → Denoising outputs
+  ├── meshes/           → Generated 3D meshes
+  ├── preprocess/       → Preprocessing outputs
+  ├── stitching/        → Stitching outputs
+  └── segcleanup/       → Segmentation cleanup outputs
 ```
+
+Per-job subfolders are created on demand as modules run, so you only see the ones that hold files.
 
 **Expanding and Collapsing Folders**
 
@@ -235,10 +244,22 @@ Right-click any file to open the context menu:
 - **How**: Right-click → View Info
 - **Modal displays**:
   - Filename and full path
-  - File size and category
+  - File size, category, and tags
   - Upload timestamp
+  - **Voxel size** (TIFF stacks): read automatically on upload and inherited by derived outputs; click the edit (✏️) button to set x/y/z spacing and unit (µm, nm, mm)
   - File ID (for technical reference)
-  - **Processing History**: Shows the lineage chain of how this file was created
+  - **Processing History**: the lineage chain (Original Upload, Denoising, Segmentation, Mesh Generation, Preprocessing, Stitching, Segmentation Cleanup, Format Conversion, Duplicated, Split)
+
+**View JSON**
+
+- **How**: Right-click a `.json` file → View JSON
+- **Result**: a syntax-highlighted, read-only viewer (files over 10 MB cannot be viewed)
+
+**Convert to…**
+
+- **How**: Right-click → Convert to…
+- **Conversions**: TIFF ↔ MRC (voxel size carried through), and mesh `.obj` to STL, PLY, or glTF (GLB)
+- **Result**: a new file tagged `converted` is added to the workspace
 
 ![Screenshot: File info modal showing metadata and processing history](/guides/file-browser-file-info.png)
 *File info modal displaying metadata and processing history*
@@ -323,12 +344,14 @@ The search bar filters files in real-time as you type.
 | **Type** | `model` | Model files (.pth) |
 
 **Category Keywords:**
-- Raw images: `raw`, `image`, `training`, `input`
+- Raw images: `raw`, `image`, `input`
 - Annotations: `annotation`, `mask`, `label`
-- Models: `model`, `pth`, `weights`, `checkpoint`
-- Segmentation: `segmentation`, `result`, `output`
-- Denoised: `denoise`, `clean`
+- Models: `weights`, `model`, `pth`; config files: `config`
+- Segmentation: `segmentation`, `segment`, `result`
+- Denoised: `denoising`, `denoised`, `clean`
 - Meshes: `mesh`, `3d`, `surface`
+- Module outputs: `preprocess`, `stitching`, `segcleanup`; recipes: `recipe`; reports: `report`, `csv`
+- Test data: `test`
 
 **Search Results View**
 
