@@ -28,19 +28,21 @@ Whether a junction is a z-continuation or a side-by-side mosaic is **inferred** 
 
 ## Quick Start
 
+The module has two steps: **Select Stacks**, then **Align & Compose**.
+
 ### New Stitch
 
 1. **Launch module** — Click "Stack Stitching" from the workspace hub
 2. **Select stacks** — Add two or more stacks; order matters (top = reference)
-3. **Align each junction** — Pick the matching slice pair, click **Auto-align**, verify with the flicker toggle
-4. **Compose** — Review the placement table, set options, compose the volume
+3. **Align each junction** — In Align & Compose, pick the matching slice pair, click **Auto-align**, verify with the flicker toggle
+4. **Compose** — In the same step, review the placement summary in the toolbar, set the output options, and press **Compose**
 5. The result is a stitched TIFF **plus a recipe** for reuse
 
 ### Apply a Saved Recipe
 
 1. Choose **Apply saved recipe** in Step 1
 2. Pick a recipe from an earlier stitch and swap its slots for the volumes to compose now
-3. Go straight to **Compose** — no re-alignment needed
+3. Continue with **Next: Compose** — alignment is skipped, and the Align & Compose step shows composing only
 
 ---
 
@@ -64,7 +66,9 @@ A recipe holds the **placements** from an earlier stitch, not its pixels. Swap e
 
 ---
 
-### Step 2: Align
+### Step 2: Align & Compose
+
+Everything after stack selection happens in one step: aligning each junction, then composing the volume from the toolbar's Output section. (With a saved recipe, the alignment part is hidden and the step shows composing only.)
 
 For each junction, three decisions: the slice pair, the in-plane transform, and what happens to duplicated sections.
 
@@ -118,13 +122,13 @@ The setting only affects continuation junctions; for side-by-side mosaics there 
 
 ---
 
-### Step 3: Compose
+#### Composing the Volume
 
-<!-- TODO(screenshot): NEW capture needed — Compose step with placement table -->
-![Compose step placement table](/guides/stitching-compose.png)
-*The placement table with per-junction relationship notes before composing*
+<!-- TODO(screenshot): NEW capture needed — step 2 toolbar with Placement Summary + Output section -->
+![Placement summary and output options](/guides/stitching-compose.png)
+*The placement summary and Output section in the Align & Compose toolbar*
 
-The placement table lists every stack with its z offset, dx, dy, rotation, and kept slice range, plus a per-junction note: *"continues in z"*, *"continues in z, merged"*, or *"side by side"*. Seam handling is automatic: images get feathered seams; label maps use nearest-neighbor with hard seams by design.
+When the junctions are aligned (or the recipe slots filled), compose from the toolbar: the **Placement Summary** lists every stack with its z offset, dx, dy, rotation, and kept slice range, plus a per-junction note: *"continues in z"*, *"continues in z, merged"*, or *"side by side"*. Seam handling is automatic: images get feathered seams; label maps use nearest-neighbor with hard seams by design.
 
 **Options:**
 

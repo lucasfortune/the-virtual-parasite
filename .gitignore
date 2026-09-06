@@ -7,3 +7,5 @@ node_modules/
 # Build output
 .vitepress/dist/
 .vitepress/cache/.DS_Store
+.vitepress/cache/
+**/.DS_Store
