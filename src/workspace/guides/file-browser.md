@@ -228,10 +228,10 @@ Right-click any file to open the context menu:
 **Rename**
 
 - **How**: Right-click → Rename
-- **Dialog**: Enter the new filename (extension must stay the same)
-- **Validation**: Cannot change file extension
+- **Dialog**: Enter the new display name
+- **Behavior**: Renaming changes the friendly name shown throughout the workspace only — the underlying file and its path are never touched, so lineage, downloads, and module references keep working
 
-> **Tip:** Use descriptive names that include the processing step or date for easier organization.
+> **Tip:** Use descriptive names that include the processing step or date for easier organization. Module outputs get readable, lineage-based display names automatically.
 
 **Delete**
 
@@ -409,7 +409,7 @@ Switch between light and dark modes:
 | Upload button disabled | No category selected | Select a category from the dropdown first |
 | "Account approval required" error | Pending user status | Wait for admin approval or use test data |
 | File not appearing after upload | Display not refreshed | Click the refresh button (🔄) |
-| Can't rename file | Extension mismatch | Keep the same file extension |
+| Rename doesn't change the downloaded filename | Rename is display-name-only | Expected — the underlying file keeps its path; the display name is what the workspace shows |
 | Drag-and-drop not working | No category selected | Select a category before dragging files |
 | Split Stack not available | Single-slice TIFF | Option only appears for multi-slice stacks |
 | Search not finding file | Spelling or category | Try different keywords or clear search |

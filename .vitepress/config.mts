@@ -276,6 +276,7 @@ export default defineConfig({
                 { text: 'Module Overview', link: '/workspace/docs/modules/mesh/_module' },
                 { text: 'Segmentation Data', link: '/workspace/docs/modules/mesh/step1-segmentation-data' },
                 { text: 'Output Options', link: '/workspace/docs/modules/mesh/step2-output-options' },
+                { text: 'Z Voxel Scale', link: '/workspace/docs/modules/mesh/step2-z-voxel-scale' },
               ]
             },
             {

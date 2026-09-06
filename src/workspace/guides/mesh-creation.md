@@ -122,9 +122,9 @@ Controls the voxel aspect ratio along z relative to the in-plane x/y pixels (ran
 | **> 1** | Stretches along z — e.g. 2 for a z-step twice the in-plane pixel size |
 | **< 1** | Compresses along z for finely-sampled stacks |
 
-Use this when your acquisition is anisotropic so the mesh keeps true physical proportions. The scale is baked into both the OBJ and the JSON.
+Use this when your acquisition is anisotropic so the mesh keeps true physical proportions. Compute it as `z-step / in-plane pixel size` from your acquisition metadata. The scale is baked into both the OBJ and the JSON (and carries into STL/PLY/glTF conversions).
 
-For more details, see [Output Options](/workspace/docs/modules/mesh/step2-output-options).
+For more details, see [Z Voxel Scale](/workspace/docs/modules/mesh/step2-z-voxel-scale) and [Output Options](/workspace/docs/modules/mesh/step2-output-options).
 
 **Click "Generate Mesh" to start processing.**
 
@@ -210,5 +210,6 @@ STL, PLY, and glTF (GLB) are produced via the File Browser's **Convert to…** o
 
 **Step-by-Step:**
 - [Segmentation Data](/workspace/docs/modules/mesh/step1-segmentation-data) — Input requirements and validation
-- [Output Options](/workspace/docs/modules/mesh/step2-output-options) — Format selection and class options
+- [Output Options](/workspace/docs/modules/mesh/step2-output-options) — Class selection and outputs
+- [Z Voxel Scale](/workspace/docs/modules/mesh/step2-z-voxel-scale) — Correct proportions for anisotropic stacks
 
