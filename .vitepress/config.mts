@@ -25,6 +25,7 @@ export default defineConfig({
     'src/index.md': 'index.md',
     'src/workspace/index.md': 'workspace/index.md',
     'src/autostructn2v/index.md': 'autostructn2v/index.md',
+    'src/phantem/index.md': 'phantem/index.md',
 
     // Workspace custom content - guides
     'src/workspace/guides/index.md': 'workspace/guides/index.md',
@@ -52,6 +53,9 @@ export default defineConfig({
 
     // AutoStructN2V docs: docs/autoStructN2V/** -> autostructn2v/docs/**
     'docs/autoStructN2V/:path*': 'autostructn2v/docs/:path*',
+
+    // PhantEM docs: docs/phantem/** -> phantem/docs/**
+    'docs/phantem/:path*': 'phantem/docs/:path*',
   },
 
   // Head tags
@@ -83,6 +87,7 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'BioMed Workspace', link: '/workspace/' },
       { text: 'AutoStructN2V', link: '/autostructn2v/' },
+      { text: 'PhantEM', link: '/phantem/' },
       // External link - URL to be provided later
       // { text: 'About', link: 'https://example.com/research-group', target: '_blank' }
     ],
@@ -362,6 +367,46 @@ export default defineConfig({
         {
           text: 'Troubleshooting',
           link: '/autostructn2v/docs/troubleshooting'
+        },
+      ],
+
+      // PhantEM sidebar
+      '/phantem/': [
+        {
+          text: 'PhantEM',
+          items: [
+            { text: 'Overview', link: '/phantem/' },
+            { text: 'Getting Started', link: '/phantem/docs/getting-started' },
+          ]
+        },
+        {
+          text: 'Concepts',
+          collapsed: false,
+          items: [
+            { text: 'Realism, Not Recreation', link: '/phantem/docs/concepts/realism' },
+            { text: 'The Noise Model', link: '/phantem/docs/concepts/noise-model' },
+            { text: 'The Validation Protocol', link: '/phantem/docs/concepts/validation-protocol' },
+          ]
+        },
+        {
+          text: 'User Guide',
+          collapsed: false,
+          items: [
+            { text: 'Tuner Workbench', link: '/phantem/docs/user-guide/tuner-workbench' },
+            { text: 'Rendering & Validation', link: '/phantem/docs/user-guide/rendering-and-validation' },
+          ]
+        },
+        {
+          text: 'Tutorials',
+          collapsed: false,
+          items: [
+            { text: 'Tune Your Own Volume', link: '/phantem/docs/tutorials/tune-your-own-volume' },
+            { text: 'Evaluate a Denoiser', link: '/phantem/docs/tutorials/evaluate-a-denoiser' },
+          ]
+        },
+        {
+          text: 'The Benchmark Data',
+          link: '/phantem/docs/data'
         },
       ],
     },
