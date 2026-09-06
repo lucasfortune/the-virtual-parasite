@@ -7,8 +7,9 @@ title: Deep Learning Denoising
 
 Remove noise from microscopy images using self-supervised deep learning. No clean reference images required.
 
+<!-- TODO(screenshot): recapture — old image shows the retired method/mode UI -->
 ![DL Denoising Module Overview](/guides/denoising-dl-overview.png)
-*The DL Denoising module showing method selection, mode toggle, and workflow options*
+*The DL Denoising module showing method selection and workflow options*
 
 ---
 
@@ -16,26 +17,27 @@ Remove noise from microscopy images using self-supervised deep learning. No clea
 
 The Deep Learning Denoising module provides two self-supervised denoising methods:
 
-| Method | Training | Best For | Complexity |
-|--------|----------|----------|------------|
-| **N2V (Noise2Void)** | Single stage | Random, uncorrelated noise (Gaussian, Poisson) | Simple |
-| **autoStructN2V** | Two stages + mask extraction | Structured noise (scan lines, periodic artifacts, camera patterns) | Advanced |
+| Method | What happens | Best For |
+|--------|--------------|----------|
+| **autoStructN2V (auto-routed)** | Noise is measured on your raw stack in seconds, then the router picks the right training: StructN2V with an automatically discovered mask, or plain N2V if no usable structure is found | Most cases, including structured noise (scan lines, streaks, detector patterns) |
+| **N2V (Noise2Void)** | Plain blind-spot training with a single-pixel mask, no noise measurement | Skipping measurement entirely when you know your noise is random and uncorrelated (Gaussian, Poisson) |
 
-Both methods learn to denoise from noisy images alone—no clean ground truth required.
+Both methods learn to denoise from noisy images alone — no clean ground truth required. Training itself produces your denoised images.
 
-For method selection guidance, see [Denoising Method](/workspace/docs/modules/denoising-dl/step1-method).
+For method selection guidance, see [Denoising Methods](/workspace/docs/modules/denoising-dl/step1-method).
 
 ### When to Use Each Method
 
 | Your Images Have... | Recommended Method |
 |---------------------|-------------------|
-| Random speckle noise | N2V |
-| Poisson (shot) noise | N2V |
-| Gaussian noise | N2V |
 | Horizontal/vertical scan lines | autoStructN2V |
-| Periodic stripe artifacts | autoStructN2V |
+| Streaks or periodic stripe artifacts | autoStructN2V |
 | Camera-specific fixed patterns | autoStructN2V |
 | Tomography reconstruction artifacts | autoStructN2V |
+| Purely random noise, and you want to skip measurement | N2V |
+| **Not sure** | **autoStructN2V** — if no usable structure exists, the router falls back to plain N2V by itself, so you lose nothing |
+
+> **Note:** Routing to plain N2V is a good outcome, not an error. It means the measurement determined your noise does not need the structured treatment. See [Routing Decision](/workspace/docs/modules/denoising-dl/routing-decision).
 
 ---
 
@@ -52,35 +54,33 @@ Start
   │     │
   │     └─ NO → Continue
   │
-  ├─ Does your noise have visible patterns or structure?
+  ├─ Are you certain your noise is purely random
+  │  and want to skip the measurement?
   │     │
-  │     ├─ YES → Use autoStructN2V
+  │     ├─ YES → Use N2V
   │     │
-  │     └─ NO (random noise) → Use N2V
+  │     └─ NO → Use autoStructN2V
+  │              (the router decides: structured mask or plain N2V)
   │
-  ├─ Is noise correlated between slices? (volumetric data)
-  │     │
-  │     ├─ YES → Use 2.5D mode (requires 20+ slices)
-  │     │
-  │     └─ NO → Use 2D mode
-  │
-  └─ Configure → Train → Done
+  └─ Configure → Start → Review mask & route → Train → Done
 ```
 
-### N2V Quick Path
-1. Launch module → Select **N2V** → Keep **2D** mode
-2. Choose **Train from Scratch** → Upload your noisy TIFF stack
-3. Use **Balanced** preset (or customize)
-4. Click **Start Denoising** → Wait for completion
-5. View results in Image Viewer
-
 ### autoStructN2V Quick Path
-1. Launch module → Select **autoStructN2V** → Choose **2D** or **2.5D** mode
+
+1. Launch module → Select **autoStructN2V**
 2. Choose **Train from Scratch** → Upload your noisy TIFF stack
-3. Use **Balanced** preset (or customize both stages)
+3. Keep the **Balanced** preset; set **Background Side** (light for bright resin/EM background, dark for fluorescence-like data)
 4. Click **Start Denoising**
-5. After Stage 1: Review the extracted mask → **Approve & Continue**
-6. Wait for Stage 2 → View results
+5. Seconds later, review the discovered mask and routing decision → **Approve & Train**
+6. Wait for the single training run → View results in the Image Viewer
+
+### N2V Quick Path
+
+1. Launch module → Select **N2V**
+2. Choose **Train from Scratch** → Upload your noisy TIFF stack
+3. Keep the **Balanced** preset (or customize)
+4. Click **Start Denoising** → Wait for completion
+5. View results in the Image Viewer
 
 ---
 
@@ -88,47 +88,24 @@ Start
 
 ### Step 1: Method & Data Selection
 
-Step 1 guides you through three decisions: method, mode, and workflow.
+Step 1 guides you through two decisions: method and workflow.
 
+<!-- TODO(screenshot): recapture — old image shows the retired 2D/2.5D toggle -->
 ![Step 1 Method Selection](/guides/denoising-dl-step1.png)
-*Select your denoising method, toggle 2D/2.5D mode, then choose a workflow*
+*Select your denoising method, then choose a workflow*
 
 #### 1. Select Denoising Method
 
-Choose between the two methods at the top of the step:
-
 | Option | Description |
 |--------|-------------|
-| **Noise2Void (N2V)** | Fast single-stage training. Best for random noise. |
-| **autoStructN2V** | Two-stage training with automatic structured noise analysis. Best for patterned artifacts. |
+| **autoStructN2V (auto-routed)** | Recommended. Measures your noise first (seconds), then trains exactly one model on the routed branch: StructN2V with a discovered mask, or plain N2V. |
+| **Noise2Void (N2V)** | Forces plain blind-spot training with a single-pixel mask. No noise measurement. |
 
-See [Denoising Method](/workspace/docs/modules/denoising-dl/step1-method) for detailed guidance.
+See [Denoising Methods](/workspace/docs/modules/denoising-dl/step1-method) for detailed guidance.
 
-#### 2. Select Processing Mode (2D / 2.5D)
+> **Where did the 2D/2.5D toggle go?** New training runs are always 2D. Models trained in 2.5D by the previous version of this module can still be imported for inference — the mode is read from the imported config automatically. See [Legacy 2.5D Models](/workspace/docs/modules/denoising-dl/step1-mode).
 
-Use the toggle switch in the top-right corner of the method selection card:
-
-| Mode | Description | Requirements |
-|------|-------------|--------------|
-| **2D** (default) | Process each slice independently | Any stack size |
-| **2.5D** | Process triplets (Z-1, Z, Z+1) using inter-slice context | Minimum 20 slices |
-
-**When to use 2.5D mode:**
-- Volumetric data with correlated structures across slices
-- EM tomography and confocal microscopy stacks
-- Noise patterns that span multiple slices
-- When preserving 3D structural continuity is important
-
-**2.5D requirements:**
-- Minimum 20 slices in the stack
-- Slices should be spatially contiguous (not random samples)
-- More GPU memory required (3x input channels)
-
-> **Important for autoStructN2V:** In 2.5D mode, the mask extraction phase shows a **3-slice triplet mask** instead of a single 2D mask. See [Step 3: Mask Extraction (2.5D)](#mask-extraction-25d-mode) for details.
-
-See [2D vs 2.5D Processing Mode](/workspace/docs/modules/denoising-dl/step1-mode) for more details.
-
-#### 3. Choose Workflow
+#### 2. Choose Workflow
 
 After selecting a method, two workflow options appear:
 
@@ -139,27 +116,22 @@ Expand **Train from Scratch** to upload your data:
 1. Click the file selector
 2. Choose a TIFF stack from your workspace or upload a new file
 3. Wait for validation (green checkmark)
-   - For 2.5D mode: validation checks that the stack has at least 20 slices
 4. Click **Next: Configure**
 
-See [Input Data](/workspace/docs/modules/denoising-dl/step1-input) for file requirements.
+**File requirements:** multi-page TIFF, 8-bit or 16-bit grayscale (float data is accepted with a warning and normalized), at least 64×64 pixels per slice, at least 10 slices. A banner at the top of the step reports whether a GPU was detected; without one, training falls back to CPU (roughly 10–50× slower). See [Input Data](/workspace/docs/modules/denoising-dl/step1-input).
+
+**For autoStructN2V:** your images should contain some background (resin, embedding medium, or empty areas) — that is where the noise is measured.
 
 ##### Option B: Import Previously Trained Model
 
 Expand **Import Previously Trained Model** to use an existing model:
 
-**For N2V:**
 | File | Description |
 |------|-------------|
 | Config (.json) | Training configuration. See [Config File](/workspace/docs/modules/denoising-dl/step1-import-config) |
 | Model (.pth) | Trained model weights. See [Model File](/workspace/docs/modules/denoising-dl/step1-import-model) |
 
-**For autoStructN2V:**
-| File | Description |
-|------|-------------|
-| Config (.json) | Training configuration |
-| Stage 1 Model (.pth) | Stage 1 trained weights |
-| Stage 2 Model (.pth) | Stage 2 trained weights |
+Current autoStructN2V trainings produce a **single** model file (whichever branch the router selected), saved with its mask and route decision. Legacy two-stage models from the previous module version come as a Stage 1 + Stage 2 pair, and both files are needed; legacy 2.5D pairs are also supported.
 
 > **Note:** When importing a model, Steps 2 and 3 are skipped. Proceed directly to Step 4 (Inference).
 
@@ -169,75 +141,63 @@ Expand **Import Previously Trained Model** to use an existing model:
 
 *This step is only shown for the Train from Scratch workflow.*
 
-Configure your training parameters. The interface differs based on your selected method.
-
 #### Presets
 
-Start with a preset to set all parameters at once:
+Start with a preset. All three carry the same validated recipe and differ only in compute budget:
 
-| Preset | Description |
-|--------|-------------|
-| **Fast** | Quick training, lower quality. Good for testing. |
-| **Balanced** | Recommended for most cases. Good quality with reasonable training time. |
-| **High Quality** | Best results, longer training time. Use when quality is critical. |
+| Preset | Description | Epochs (N2V / StructN2V branch) |
+|--------|-------------|--------------------------------|
+| **Fast** | Quick preview: fewer epochs and fewer sampled patches | 50 / 50 |
+| **Balanced** | The publication training budget. Recommended. | 200 / 100 |
+| **High Quality** | Extended budget: more epochs, denser patch sampling | 400 / 200 |
+
+#### Parameter Groups
+
+Each recipe form has two groups:
+
+- **Training Budget** — epochs, patches per image, batch size, early stopping. These are the knobs the presets change.
+- **Advanced Options** (collapsed by default) — patch size, learning rate, mask percentage, data augmentation. The network architecture is fixed to the published recipe and is no longer exposed.
 
 #### N2V Configuration (Single Column)
 
 For N2V, you'll see a single configuration form:
 
+<!-- TODO(screenshot): recapture — layout changed to Training Budget + Advanced Options groups -->
 ![N2V Configuration](/guides/denoising-dl-step2-n2v.png)
-*N2V single-stage configuration*
-
-##### Parameter Summary
-
-| Category | Parameter | Default | Help Article |
-|----------|-----------|---------|--------------|
-| **Dataset** | Patch Size | 64 | [Patch Size](/workspace/docs/modules/denoising-dl/step2-patch-size) |
-| | Patches per Image | 100 | [Patches per Image](/workspace/docs/modules/denoising-dl/step2-patches-per-image) |
-| | Batch Size | 8 | [Batch Size](/workspace/docs/modules/denoising-dl/step2-batch-size) |
-| | Mask Percentage | 15% | [Mask Percentage](/workspace/docs/modules/denoising-dl/step2-mask-percentage) |
-| | Data Augmentation | On | [Augmentation](/workspace/docs/modules/denoising-dl/step2-augmentation) |
-| **Architecture** | Number of Features | 64 | [Features](/workspace/docs/modules/denoising-dl/step2-features) |
-| | Number of Layers | 4 | [Number of Layers](/workspace/docs/modules/denoising-dl/step2-num-layers) |
-| **Training** | Learning Rate | 1e-4 | [Learning Rate](/workspace/docs/modules/denoising-dl/step2-learning-rate) |
-| | Epochs | 100 | [Epochs](/workspace/docs/modules/denoising-dl/step2-epochs) |
-| | Early Stopping | On | [Early Stopping](/workspace/docs/modules/denoising-dl/step2-early-stopping) |
-
-**Advanced Options** (collapsed by default):
-- Resize Convolution: [Resize Conv](/workspace/docs/modules/denoising-dl/step2-resize-conv)
-- Upsampling Mode: [Upsampling Mode](/workspace/docs/modules/denoising-dl/step2-upsampling-mode)
-- Masking Strategy: [Masking Strategy](/workspace/docs/modules/denoising-dl/step2-masking-strategy)
+*N2V configuration with Training Budget and Advanced Options*
 
 #### autoStructN2V Configuration (Dual Column)
 
-For autoStructN2V, you'll see a side-by-side layout for both training stages:
+For autoStructN2V, two recipe columns appear side by side: the **N2V branch** and the **StructN2V branch**. The noise measurement routes each run to exactly one branch and only that branch trains — but you configure both here so either outcome is ready.
 
+<!-- TODO(screenshot): recapture — columns are now "N2V branch" / "StructN2V branch", plus Noise Measurement section -->
 ![autoStructN2V Configuration](/guides/denoising-dl-step2-autostructn2v.png)
-*autoStructN2V two-stage configuration with Stage 1 (left) and Stage 2 (right)*
+*autoStructN2V configuration: N2V branch (left), StructN2V branch (right)*
 
-##### Stage 1 vs Stage 2 Defaults
+##### Branch Defaults
 
-| Parameter | Stage 1 | Stage 2 | Notes |
-|-----------|---------|---------|-------|
-| Patch Size | 32 | 64 | Stage 2 uses larger patches |
-| Patches per Image | 100 | 200 | More patches in Stage 2 |
-| Batch Size | 4 | 2 | Smaller batches in Stage 2 |
-| Mask Percentage | 15% | 10% | Lower masking in Stage 2 |
-| Learning Rate | 1e-4 | 1e-5 | Lower learning rate in Stage 2 |
-| Data Augmentation | Off | On | Augmentation disabled in Stage 1 |
+| Parameter | N2V branch | StructN2V branch | Why they differ |
+|-----------|-----------|------------------|-----------------|
+| Patch Size | 64 | 128 | The structural mask needs more spatial context |
+| Batch Size | 128 | 24 | Larger patches need smaller batches |
+| Mask Percentage | 1.5% | 15% | Each StructN2V site also blanks its correlated neighbours |
+| Learning Rate | 0.001 | 0.001 | Same validated value |
+| Data Augmentation | On | Off | Flips/rotations would break the mask's alignment with the directional noise |
 
-> **Important:** Stage 1 augmentation is automatically disabled for autoStructN2V. This preserves structural noise patterns needed for mask extraction.
+Parameter details: [Patch Size](/workspace/docs/modules/denoising-dl/step2-patch-size), [Patches per Image](/workspace/docs/modules/denoising-dl/step2-patches-per-image), [Batch Size](/workspace/docs/modules/denoising-dl/step2-batch-size), [Mask Percentage](/workspace/docs/modules/denoising-dl/step2-mask-percentage), [Learning Rate](/workspace/docs/modules/denoising-dl/step2-learning-rate), [Epochs](/workspace/docs/modules/denoising-dl/step2-epochs), [Early Stopping](/workspace/docs/modules/denoising-dl/step2-early-stopping), [Augmentation](/workspace/docs/modules/denoising-dl/step2-augmentation).
 
-##### Mask Extractor Configuration
+##### Noise Measurement (autoStructN2V only)
 
-Below the stage columns, expand **Mask Extractor Configuration** to adjust how structural noise patterns are detected:
+Below the branch columns, the **Noise Measurement** section controls how the noise is measured and the mask discovered:
 
 | Parameter | Default | Description | Help Article |
 |-----------|---------|-------------|--------------|
-| Adaptive Thresholding | On | Automatically adjust threshold per slice | [Adaptive Thresholding](/workspace/docs/modules/denoising-dl/step2-mask-extractor-adaptive) |
-| Base Percentile | 50% | Starting threshold for noise detection | [Base Percentile](/workspace/docs/modules/denoising-dl/step2-mask-extractor-base-percentile) |
-| Percentile Decay | 1.15 | Rate at which threshold adapts | [Percentile Decay](/workspace/docs/modules/denoising-dl/step2-mask-extractor-percentile-decay) |
-| Max Masked Pixels | 25 | Maximum active pixels in the mask | [Max Masked Pixels](/workspace/docs/modules/denoising-dl/step2-mask-extractor-max-pixels) |
+| **Background Side** | *(required)* | Which intensity side of your images is background: light, dark, or off | [Background Side](/workspace/docs/modules/denoising-dl/step2-mask-extractor-bg-side) |
+| Correlation Floor | 0.05 | Effect-size floor: minimum \|rho\| a pixel needs to stay in the mask | [Correlation Floor](/workspace/docs/modules/denoising-dl/step2-mask-extractor-rho-floor) |
+| Significance Threshold (\|z\|) | 8 | Statistical certainty a feature needs to enter the mask | [Spine Threshold](/workspace/docs/modules/denoising-dl/step2-mask-extractor-spine-thresh) |
+| Max Mask Pixels | unset | Optional hard cap on mask size | [Max Mask Pixels](/workspace/docs/modules/denoising-dl/step2-mask-extractor-max-pixels) |
+
+**Background Side is the one required choice.** Everything else has validated defaults, and you can adjust all of these again while reviewing the discovered mask — regenerating only takes seconds.
 
 Click **Next: Training** when configuration is complete.
 
@@ -247,140 +207,87 @@ Click **Next: Training** when configuration is complete.
 
 *This step is only shown for the Train from Scratch workflow.*
 
-The training interface differs significantly between N2V and autoStructN2V.
-
-#### N2V Training (Single Stage)
+#### N2V Training
 
 For N2V, click **Start Denoising** to begin training:
 
 ![N2V Training](/guides/denoising-dl-step3-n2v.png)
-*N2V single-stage training progress*
+*N2V training progress*
 
 **During Training:**
 - Progress bar shows current epoch
-- Loss chart displays training and validation loss
-- Metrics cards show current and best validation loss
+- Loss chart displays training loss (red) and validation loss (teal) — see [Loss Curves](/workspace/docs/modules/denoising-dl/step3-loss)
+- Metrics cards show current and [best validation loss](/workspace/docs/modules/denoising-dl/step3-best-val-loss)
 
 **Training Completion:**
 - Status changes to "Complete"
 - **Open in Viewer** and **Start new Analysis** buttons appear
 - You can proceed to Step 4 to denoise additional images
 
-> **Tip:** You don't need to watch the entire training process. Feel free to explore other modules while training continues in the background. Note that only one denoising training can run at a time.
+> **Tip:** You don't need to watch the entire training. If you leave and return while a run is in progress, a resume dialog offers to reconnect. Only one denoising training can run at a time across the whole workspace.
 
-#### autoStructN2V Training (Multi-Stage)
+#### autoStructN2V: Measure → Review → Train
 
-autoStructN2V training consists of three phases displayed in collapsible sections:
+autoStructN2V runs in three phases. See [autoStructN2V Training](/workspace/docs/modules/denoising-dl/step3-autostructn2v).
 
+##### Phase 1: Noise Measurement and Routing (seconds)
+
+Right after you press **Start Denoising**, background regions are selected from your raw stack and the noise autocorrelation (ACF) is measured. The router then decides which branch to train. **No GPU time is spent in this phase.**
+
+##### Phase 2: Mask and Route Review
+
+The run pauses and shows the decision before any training:
+
+<!-- TODO(screenshot): NEW capture needed — routing decision card + mask review panel -->
+![Routing decision and mask review](/guides/denoising-dl-routing-review.png)
+*The approval pause: route decision card (left) and discovered mask with extractor parameters (right)*
+
+**The decision card** shows the chosen branch, the reason, the Dmax statistic against its threshold (0.012), and — for the StructN2V route — the mask leak coverage Σρ² (the fraction of the center pixel's noise variance the mask covers). See [Routing Decision](/workspace/docs/modules/denoising-dl/routing-decision).
+
+**The mask review panel** shows the discovered spine mask as a pixel grid with statistics (kernel size, active pixels, pattern type, coverage) and a parameter panel with Background Side, Correlation Floor, Significance Threshold (|z|), and Max Mask Pixels, plus **Reset to Defaults** and **Regenerate Mask**.
+
+**Your options:**
+
+| Action | Effect |
+|--------|--------|
+| **Approve & Train** | Train the routed branch with the mask as shown (reads **Continue with N2V** when the route is plain N2V) |
+| **Adjust & Regenerate** | Change extractor parameters and recompute mask + route — takes seconds |
+| **Use Plain N2V Instead** | Override the router and train with the 1×1 center mask (hidden when the route is already N2V) |
+
+If the mask comes back with very few active pixels, a **"Low Structural Noise Detected"** warning appears with a shortcut to continue with plain N2V.
+
+**Auto-approve:** a toggle lets training continue without the pause, for hands-off runs. It can only be set **before** the analysis runs — once the measurement completes, you review manually.
+
+##### Phase 3: Single Training and Denoising
+
+Exactly one model trains with the approved mask, then your full stack is denoised. There are no separate stages anymore — total time is comparable to a plain N2V run (the old two-stage flow took roughly twice as long).
+
+<!-- TODO(screenshot): recapture — old image shows the retired three-phase stage interface -->
 ![autoStructN2V Training](/guides/denoising-dl-step3-autostructn2v.png)
-*autoStructN2V three-phase training interface*
-
-##### Phase 1: Stage 1 N2V Training
-
-Click **Start Denoising** to begin. Stage 1 trains a standard N2V model:
-
-- Progress bar shows epoch progress
-- Loss chart tracks training/validation loss
-- Status updates: "Pending" → "Training" → "Complete"
-
-When Stage 1 completes, the mask extraction phase begins automatically.
-
-##### Phase 2: Mask Extraction
-
-After Stage 1, the module analyzes the difference between noisy input and Stage 1 output to extract a structural noise mask.
-
-###### Mask Extraction (2D Mode)
-
-In 2D mode, you'll see a single mask grid:
-
-![Mask Extraction 2D](/guides/denoising-dl-step3-mask-2d.png)
-*2D mask extraction showing a single detected noise pattern*
-
-**Mask Display:**
-- Single grid showing the detected structural noise pattern
-- Active pixels (purple) represent positions where structured noise was detected
-- Center pixel (highlighted) is the reference position
-- Statistics: kernel size, active pixel count, coverage percentage
-
-###### Mask Extraction (2.5D Mode)
-
-In 2.5D mode, the mask becomes a **triplet** showing patterns for three Z-positions:
-
-![Mask Extraction 2.5D](/guides/denoising-dl-step3-mask-25d.png)
-*2.5D triplet mask extraction with three slice tabs*
-
-**Triplet Mask Interface:**
-- **Three tabs** at the top: "Z-1 (above)", "Z (center)", "Z+1 (below)"
-- Each tab shows the mask for that slice position in the triplet
-- Click tabs to switch between slice views
-- The 3D mask captures noise correlations across the Z-axis
-
-**Interpreting the Triplet Mask:**
-| Tab | Shows | Meaning |
-|-----|-------|---------|
-| **Z-1 (above)** | Mask for slice above center | Noise correlations from previous slice |
-| **Z (center)** | Mask for center slice | Primary structural noise pattern |
-| **Z+1 (below)** | Mask for slice below center | Noise correlations from next slice |
-
-Different slices may show different patterns if the structured noise varies across the Z-axis.
-
-###### Mask Actions
-
-| Button | Description |
-|--------|-------------|
-| **Approve & Continue to Stage 2** | Accept the mask and proceed to Stage 2 training |
-| **Skip Stage 2** | Use Stage 1 results only (if no structure detected) |
-
-**Auto-approve Toggle:**
-Enable **Auto-approve** (toggle in header) to automatically approve the mask and continue to Stage 2 without manual intervention. Useful for batch processing.
-
-**Adjusting the Mask:**
-If the detected pattern doesn't look right, use the parameter panel to adjust:
-1. Modify Base Percentile, Percentile Decay, or Max Masked Pixels
-2. Click **Regenerate Mask**
-3. Review the new mask (check all three tabs in 2.5D mode)
-4. Approve when satisfied
-
-##### Phase 3: Stage 2 Struct-N2V Training
-
-After mask approval, Stage 2 trains using the extracted mask:
-
-- Progress and metrics display similar to Stage 1
-- Stage 2 specifically targets the structured noise patterns identified in the mask
-- In 2.5D mode, the 3D mask guides the network to ignore correlated noise across slices
-- Status: "Pending" → "Training" → "Complete"
-
-**When Stage 2 Completes:**
-- **Open in Viewer** button appears
-- Final denoised result is the Stage 2 output
-- You can compare Stage 1 vs Stage 2 results in the Image Viewer
+*The routed branch training after mask approval*
 
 ---
 
 ### Step 4: Process Additional Data (Optional)
 
-Apply your trained model to denoise additional images without retraining.
+Apply your trained model to denoise additional images without retraining. If your only goal was to denoise the images you uploaded in Step 1, you're done — those were denoised during training.
 
 ![Step 4 Inference](/guides/denoising-dl-step4.png)
 *Apply the trained model to new data*
 
 #### Model Information
 
-A summary card shows your model details:
-- Method used (N2V or autoStructN2V)
-- Training mode (2D or 2.5D)
-- When training completed
+A summary card shows the model that will be applied: its source (Trained Model or Imported Model), the method (N2V or autoStructN2V), and the training ID or imported model details.
 
 #### Process New Images
 
-1. Click the file selector to choose additional data
-2. Select a TIFF stack from your workspace
-   - For 2.5D models: new data should also have sufficient slices
-3. Click **Process Data**
-4. Monitor the progress bar
-5. When complete, click **Open in Image Viewer** or **Process More**
+1. Click the file selector to choose additional data (validated the same way as training input)
+2. Click **Process Data** — the model denoises without training
+3. When complete, click **Open in Image Viewer** or **Start New Run**
 
-See [Inference Data](/workspace/docs/modules/denoising-dl/step4-data) and [Inference Overview](/workspace/docs/modules/denoising-dl/step4-overview).
+There is no separate download button; results are workspace files you open in the Image Viewer.
+
+For best results, use images from the same acquisition conditions as the training data. See [Inference Data](/workspace/docs/modules/denoising-dl/step4-data) and [Inference Overview](/workspace/docs/modules/denoising-dl/step4-overview).
 
 ---
 
@@ -390,12 +297,12 @@ The module saves files to your workspace:
 
 | Output | Location | Description |
 |--------|----------|-------------|
-| Denoised images | `results/<training-id>/` | Denoised TIFF stack |
-| Trained model | `models/<session>/<training-id>/` | Model weights (.pth) |
-| Configuration | `models/<session>/<training-id>/` | Training config (.json) |
-| Mask (autoStructN2V) | `models/<session>/<training-id>/` | Extracted noise mask |
+| Denoised images | `results/denoising/` | Denoised TIFF stack |
+| Trained model | `models/denoising/` | Model weights (.pth) |
+| Configuration | `models/denoising/` | Training config (.json) |
+| Mask & route decision (autoStructN2V) | `models/denoising/` | The discovered mask and the routing record |
 
-For autoStructN2V, both Stage 1 and Stage 2 outputs are saved.
+Nothing is downloaded during training — all files land in your workspace and appear in the File Browser and file selectors.
 
 ---
 
@@ -403,16 +310,16 @@ For autoStructN2V, both Stage 1 and Stage 2 outputs are saved.
 
 | Issue | Possible Cause | Solution |
 |-------|----------------|----------|
-| "Insufficient Stack Depth for 2.5D" | Stack has fewer than 20 slices | Switch to 2D mode or use a larger stack |
-| Training very slow | Large images or many epochs | Reduce patch size, use Fast preset, or wait |
-| Poor denoising quality | Wrong method for noise type | Try the other method (N2V ↔ autoStructN2V) |
-| Artifacts remain after N2V | Structured noise present | Switch to autoStructN2V |
-| Empty mask extracted | No detectable structure | Use Skip Stage 2 or try N2V instead |
-| Mask shows random pattern | Threshold too sensitive | Increase Base Percentile, reduce Max Masked Pixels |
-| 2.5D triplet mask looks inconsistent | Noise varies across slices | This may be correct; check each tab individually |
-| Stage 2 worse than Stage 1 | Mask captured wrong pattern | Adjust mask parameters and regenerate |
-| GPU not detected | CUDA not available | Training will use CPU (slower) |
-| Out of memory | Batch size too large | Reduce batch size (especially in 2.5D mode) |
+| Router picked plain N2V but I expected structure | Noise has no usable directional correlation (Dmax below 0.012) | This is an informative result, not an error — plain N2V is the right training for this data |
+| Mask looks wrong or misses the visible pattern | Wrong Background Side | Check Background Side first, then Regenerate (seconds) |
+| Mask misses a visible noise direction | Thresholds too strict | Lower the Correlation Floor or the Significance Threshold, Regenerate |
+| Mask contains scattered pixels with no visible pattern | Threshold too sensitive | Raise the Significance Threshold (\|z\|), Regenerate |
+| "Low Structural Noise Detected" warning | Little directional structure found | Use the shortcut to continue with plain N2V |
+| Artifacts remain after forced N2V | Structured noise present | Rerun with autoStructN2V |
+| Training very slow | Large images, many epochs, or CPU fallback | Use the Fast preset, check the GPU banner in Step 1 |
+| Out of memory | Batch size too large | Reduce batch size (StructN2V branch first — it uses larger patches) |
+| Loss curve unstable | Learning rate too high | Lower the learning rate (e.g. to 1e-4) |
+| Can't change auto-approve during the run | Toggle locks once analysis completes | Set auto-approve before starting; otherwise review manually |
 
 ---
 
@@ -420,20 +327,13 @@ For autoStructN2V, both Stage 1 and Stage 2 outputs are saved.
 
 Noise2Void (N2V) is a self-supervised denoising method that works by:
 
-1. **Blind-spot training:** During training, the network learns to predict each pixel's value from its surrounding context, without seeing the pixel itself
-2. **Self-supervision:** The noisy image serves as both input and target
-3. **Assumption:** Noise is pixel-independent (random, uncorrelated)
+1. **Blind-spot training:** the network learns to predict each pixel's value from its surrounding context, without seeing the pixel itself
+2. **Self-supervision:** the noisy image serves as both input and target
+3. **Assumption:** noise is pixel-independent (random, uncorrelated)
 
-**In 2.5D mode:** The network takes 3 consecutive slices as input and predicts only the center slice, leveraging inter-slice context for better denoising.
+**Strengths:** fast single training run, works well for random microscopy noise, simple configuration.
 
-**Strengths:**
-- Fast single-stage training
-- Works well for most microscopy noise
-- Simple configuration
-
-**Limitations:**
-- Cannot handle structured or correlated noise
-- May leave pattern artifacts from camera or reconstruction
+**Limitation:** when noise is correlated between neighboring pixels (structured noise), the network can "cheat" by copying correlated noise from neighbors instead of removing it.
 
 For more details, see [N2V Training](/workspace/docs/modules/denoising-dl/step3-n2v).
 
@@ -441,36 +341,21 @@ For more details, see [N2V Training](/workspace/docs/modules/denoising-dl/step3-
 
 ## Method Details: autoStructN2V
 
-autoStructN2V extends N2V to handle structured noise through a two-stage approach:
+autoStructN2V (ASN2V) extends N2V to handle structured noise — by measuring first and training once:
 
-**Stage 1: Initial N2V Training**
-- Trains a standard N2V model
-- Output: Partially denoised image (random noise removed, structured noise remains)
+**Noise Measurement on the Raw Stack.** Background regions are selected automatically from your raw images (your only required input is the Background Side). The noise autocorrelation function (ACF) is measured on detrended background tiles. Takes seconds, before any training.
 
-**Mask Extraction:**
-- Compares noisy input with Stage 1 output
-- Identifies pixels with consistent residual patterns
-- Generates a "structN2V mask" showing which pixel relationships to exclude
-- **In 2.5D mode:** Generates a 3D triplet mask capturing patterns across Z-1, Z, and Z+1 positions
+**Routing Decision.** A directionality statistic (Dmax) is computed from the ACF. At or above the threshold, the StructN2V branch is chosen with the discovered mask; below it, the plain N2V branch (same blind-spot training, single-pixel mask).
 
-**Stage 2: Struct-N2V Training**
-- Trains using the extracted mask
-- The mask tells the network which neighboring pixels might share correlated noise
-- **In 2.5D mode:** The 3D mask guides cross-slice noise handling
-- Output: Fully denoised image (both random and structured noise removed)
+**Mask Discovery (StructN2V route).** The discovered mask is a *spine*: one-pixel-wide line summaries of the significant ACF features (positive and negative correlations alike), ray-connected to the center and symmetric under 180° rotation. Two knobs control it: the Correlation Floor (effect size) and the Significance Threshold (certainty).
 
-**Strengths:**
-- Automatically detects structured noise patterns
-- No manual mask creation required
-- Effective for scan lines, periodic artifacts, camera patterns
-- 2.5D mode captures 3D noise correlations
+**Your Approval, Then One Training.** The mask and route appear seconds after you press Start. Approve, adjust and regenerate, or override to plain N2V — then exactly one model trains and your full stack is denoised.
 
-**Limitations:**
-- Longer training time (two stages)
-- Requires sufficient structural noise for mask extraction
-- More parameters to configure
+**Strengths:** automatic detection of structured noise, no manual mask creation, safe fallback to plain N2V, one training run (comparable cost to N2V).
 
-For more details, see [autoStructN2V Training](/workspace/docs/modules/denoising-dl/step3-autostructn2v) and [autoStructN2V Details](/workspace/docs/modules/denoising-dl/autostructn2v-detail).
+**Limitations:** needs some background in the images for the measurement; 2D training only (legacy 2.5D models remain usable for inference).
+
+For more details, see [autoStructN2V Explained](/workspace/docs/modules/denoising-dl/autostructn2v-detail) and the ASN2V paper (Fortune 2026, code at [github.com/lucasfortune/asn2v](https://github.com/lucasfortune/asn2v)).
 
 ---
 
@@ -478,10 +363,12 @@ For more details, see [autoStructN2V Training](/workspace/docs/modules/denoising
 
 ### Module Overview
 - [DL Denoising Overview](/workspace/docs/modules/denoising-dl/_module)
+- [autoStructN2V Explained](/workspace/docs/modules/denoising-dl/autostructn2v-detail)
+- [Routing Decision](/workspace/docs/modules/denoising-dl/routing-decision)
 
 ### Step 1: Method & Data Selection
-- [Denoising Method](/workspace/docs/modules/denoising-dl/step1-method)
-- [2D vs 2.5D Processing Mode](/workspace/docs/modules/denoising-dl/step1-mode)
+- [Denoising Methods](/workspace/docs/modules/denoising-dl/step1-method)
+- [Legacy 2.5D Models](/workspace/docs/modules/denoising-dl/step1-mode)
 - [Workflow Selection](/workspace/docs/modules/denoising-dl/step1-workflow)
 - [Input Data](/workspace/docs/modules/denoising-dl/step1-input)
 - [Import Config File](/workspace/docs/modules/denoising-dl/step1-import-config)
@@ -494,27 +381,23 @@ For more details, see [autoStructN2V Training](/workspace/docs/modules/denoising
 - [Batch Size](/workspace/docs/modules/denoising-dl/step2-batch-size)
 - [Mask Percentage](/workspace/docs/modules/denoising-dl/step2-mask-percentage)
 - [Augmentation](/workspace/docs/modules/denoising-dl/step2-augmentation)
-- [Features](/workspace/docs/modules/denoising-dl/step2-features)
-- [Number of Layers](/workspace/docs/modules/denoising-dl/step2-num-layers)
 - [Learning Rate](/workspace/docs/modules/denoising-dl/step2-learning-rate)
 - [Epochs](/workspace/docs/modules/denoising-dl/step2-epochs)
 - [Early Stopping](/workspace/docs/modules/denoising-dl/step2-early-stopping)
 
-### Step 2: Mask Extractor (autoStructN2V)
-- [Adaptive Thresholding](/workspace/docs/modules/denoising-dl/step2-mask-extractor-adaptive)
-- [Base Percentile](/workspace/docs/modules/denoising-dl/step2-mask-extractor-base-percentile)
-- [Percentile Decay](/workspace/docs/modules/denoising-dl/step2-mask-extractor-percentile-decay)
-- [Max Masked Pixels](/workspace/docs/modules/denoising-dl/step2-mask-extractor-max-pixels)
+### Step 2: Noise Measurement (autoStructN2V)
+- [Background Side](/workspace/docs/modules/denoising-dl/step2-mask-extractor-bg-side)
+- [Correlation Floor](/workspace/docs/modules/denoising-dl/step2-mask-extractor-rho-floor)
+- [Significance Threshold](/workspace/docs/modules/denoising-dl/step2-mask-extractor-spine-thresh)
+- [Max Mask Pixels](/workspace/docs/modules/denoising-dl/step2-mask-extractor-max-pixels)
 
 ### Step 3: Training
 - [Training Overview](/workspace/docs/modules/denoising-dl/step3-overview)
 - [N2V Training](/workspace/docs/modules/denoising-dl/step3-n2v)
 - [autoStructN2V Training](/workspace/docs/modules/denoising-dl/step3-autostructn2v)
-- [Loss Metrics](/workspace/docs/modules/denoising-dl/step3-loss)
+- [Loss Curves](/workspace/docs/modules/denoising-dl/step3-loss)
 - [Best Validation Loss](/workspace/docs/modules/denoising-dl/step3-best-val-loss)
-- [autoStructN2V Details](/workspace/docs/modules/denoising-dl/autostructn2v-detail)
 
 ### Step 4: Inference
 - [Inference Overview](/workspace/docs/modules/denoising-dl/step4-overview)
 - [Inference Data](/workspace/docs/modules/denoising-dl/step4-data)
-
