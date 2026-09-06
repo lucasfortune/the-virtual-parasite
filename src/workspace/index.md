@@ -23,7 +23,7 @@ Whether you work with confocal microscopy, light-sheet imaging, or electron micr
 
 ### Train Deep Learning Models
 
-Train U-Net segmentation models and Noise2Void denoising models on your specific samples - no coding required. The step-by-step workflows guide you through each stage.
+Train U-Net segmentation models and self-supervised denoising models (auto-routed autoStructN2V / Noise2Void) on your specific samples - no coding required. The step-by-step workflows guide you through each stage.
 
 ### Generate 3D Meshes
 
@@ -33,13 +33,16 @@ Convert segmented image stacks into 3D surface meshes for visualization, analysi
 
 | Module | Description |
 |--------|-------------|
-| [U-Net Segmentation](/workspace/docs/modules/segmentation/_module) | Train and run semantic segmentation models |
-| [Deep Learning Denoising](/workspace/docs/modules/denoising-dl/_module) | Self-supervised denoising with N2V and autoStructN2V |
+| [Image Viewer](/workspace/docs/modules/imageviewer/_module) | Browse TIFF image stacks |
+| [Preprocessing](/workspace/docs/modules/preprocess/_module) | Crop, trim, flip/rotate, downscale, and intensity-adjust stacks non-destructively |
+| [Deep Learning Denoising](/workspace/docs/modules/denoising-dl/_module) | Self-supervised denoising with auto-routed autoStructN2V and N2V |
 | [Filter Denoising](/workspace/docs/modules/denoising-filter/_module) | Classical Gaussian and Non-Local Means filtering |
 | [Quick Annotation](/workspace/docs/modules/annotation/_module) | Browser-based annotation tool for ground truth creation |
+| [U-Net Segmentation](/workspace/docs/modules/segmentation/_module) | Train and run semantic segmentation models |
+| [Segmentation Cleanup](/workspace/docs/modules/segcleanup/_module) | Paint corrections, automated cleanup, and per-class quantification |
+| [Stack Stitching](/workspace/docs/modules/stitching/_module) | Join stacks in z or as mosaics, with reusable stitch recipes |
 | [Mesh Generation](/workspace/docs/modules/mesh/_module) | Convert segmentations to 3D polygon meshes |
 | [3D Visualization](/workspace/docs/modules/visualization/_module) | Interactive mesh viewer with clipping planes |
-| [Image Viewer](/workspace/docs/modules/imageviewer/_module) | Browse TIFF image stacks |
 | [File Browser](/workspace/docs/modules/file-browser/_module) | Manage your workspace files and exports |
 
 ## Get Started

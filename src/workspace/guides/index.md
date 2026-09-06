@@ -16,14 +16,29 @@ Step-by-step guides and best practices to help you get the most out of the BioMe
   <p>Create your account, navigate the interface, and run your first analysis</p>
 </a>
 
+<a href="./preprocessing" class="doc-card">
+  <h3>Preprocessing Module</h3>
+  <p>Crop, trim, downscale, and adjust intensity before running the pipeline</p>
+</a>
+
 <a href="./segmentation-module" class="doc-card">
   <h3>Segmentation Module</h3>
   <p>Train U-Net models for biomedical image segmentation or use pretrained models</p>
 </a>
 
+<a href="./segmentation-cleanup" class="doc-card">
+  <h3>Segmentation Cleanup Module</h3>
+  <p>Paint corrections, run automated cleanup, and quantify segmentations per class</p>
+</a>
+
+<a href="./stack-stitching" class="doc-card">
+  <h3>Stack Stitching Module</h3>
+  <p>Join stacks in z or as mosaics, with reusable stitch recipes for sibling volumes</p>
+</a>
+
 <a href="./deep-learning-denoising" class="doc-card">
   <h3>Deep Learning Denoising</h3>
-  <p>Remove noise with N2V and autoStructN2V self-supervised learning methods</p>
+  <p>Remove noise with auto-routed autoStructN2V and N2V self-supervised learning</p>
 </a>
 
 <a href="./filter-denoising" class="doc-card">
