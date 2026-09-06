@@ -1,214 +1,60 @@
-# Pipeline API Reference
+# API: pipeline
 
-Technical reference for the `pipeline` module.
+The routed runner, configuration handling, and data splitting. Module: `autoStructN2V.pipeline`.
 
-## Module: `pipeline.runner`
+## Runner (`pipeline/runner.py`)
 
-### `run_pipeline(config)`
+### `run_pipeline(config) -> dict`
 
-Main entry point for the autoStructN2V pipeline.
+The package's main entry point: validate config → resolve the route → train one model → denoise the stack. Returns a summary dict with `branch`, `route_reason`, `route_metrics`, `mask_path`, `model_path`, `denoised_stack`, `experiment_dir`, `final_results_dir` — or `halted`, `halt_reason`, `mask_review_dir` when `extractor_input='compare'` stopped the run for review.
 
-**Parameters:**
-- `config` (dict): Configuration dictionary
+### `resolve_route(config, stack, dirs=None, verbose=False) -> RouteDecision`
 
-**Returns:**
-- dict: Results summary with keys:
-  - `experiment_dir`: Path to experiment directory
-  - `config`: Complete configuration
-  - `stages_run`: List of stages executed
-  - `stage1_model_path`: Path to Stage 1 model (if run)
-  - `stage1_denoised_dir`: Path to Stage 1 outputs (if run)
-  - `stage2_model_path`: Path to Stage 2 model (if run)
-  - `stage2_mask_path`: Path to Stage 2 mask (if run)
-  - `final_results_dir`: Path to final denoised images
+Resolves the mask source into a routing decision without training: runs the extractor (`source='extractor'`), builds a center kernel (`'center'`), or loads a file kernel (`'file'`).
 
-**Raises:**
-- `ValueError`: Invalid configuration
-- `FileNotFoundError`: Input directory not found
-- `RuntimeError`: Training or inference failures
+### `load_mask_from_file(path, verbose=False) -> np.ndarray`
 
-**Example:**
+Loads and validates a `.npy` boolean kernel.
+
+## Configuration (`pipeline/config.py`)
+
+### `validate_config(config) -> dict`
+
+Fills every unspecified key with a documented default, validates types/ranges/paths, and **auto-translates legacy two-stage configs** (`stage1` → `recipes.n2v`, `stage2` → `recipes.structn2v`, mask block derived). The retired ring-Otsu `mask_source='stage1'` path raises; retired ROI-selection keys are dropped.
+
+### `create_output_directories(config) -> dict`
+
+Creates the experiment directory tree and returns its paths.
+
+### Defaults dictionaries
+
+`TOP_DEFAULTS`, `N2V_RECIPE_DEFAULTS`, `STRUCTN2V_RECIPE_DEFAULTS`, `EXTRACTOR_DEFAULTS` — the source of truth for every default in the [Configuration guide](/autostructn2v/docs/user-guide/configuration).
+
+## Data (`pipeline/data.py`)
+
+### `split_stack_indices(num_slices, split_ratio=(0.7, 0.15, 0.15), seed=None, verbose=False)`
+
+Deterministic train/val/test split of z-slice indices.
+
+### `create_routed_dataloaders(config, recipe, single_kernel, stack, slice_indices, verbose=False)`
+
+Builds the train/val/test dataloaders for the routed branch: patch sampling, blind-spot masking with the branch kernel, normalization, and (N2V branch only) augmentation.
+
+## Example
+
 ```python
-from autoStructN2V.pipeline import run_pipeline
+from autoStructN2V.pipeline import run_pipeline, validate_config, resolve_route
 
-config = {
-    'input_dir': './data/',
-    'experiment_name': 'my_exp',
-}
-results = run_pipeline(config)
+config = validate_config({
+    "input_data": "stack.tif",
+    "mask": {"source": "extractor", "extractor": {"bg_side": "light"}},
+})
+
+# peek at the route without training:
+import tifffile, numpy as np
+stack = tifffile.imread("stack.tif").astype(np.float32)
+decision = resolve_route(config, stack, verbose=True)
+print(decision.branch, decision.reason, decision.message)
+
+summary = run_pipeline(config)
 ```
-
----
-
-### `create_stage2_mask(config, image_paths, denoised_patches, verbose)`
-
-Create structured mask for Stage 2.
-
-**Parameters:**
-- `config` (dict): Configuration
-- `image_paths` (tuple, optional): (train, val, test) paths
-- `denoised_patches` (np.ndarray, optional): Stage 1 patches
-- `verbose` (bool): Print details
-
-**Returns:**
-- tuple: (full_mask, prediction_kernel)
-  - full_mask: Boolean array (patch_size, patch_size)
-  - prediction_kernel: Boolean array (patch_size, patch_size)
-
-**Example:**
-```python
-full_mask, pred_kernel = create_stage2_mask(
-    config, image_paths=paths, verbose=True
-)
-```
-
----
-
-### `load_mask_from_file(mask_file_path, verbose)`
-
-Load masking kernel from .npy file.
-
-**Parameters:**
-- `mask_file_path` (str): Path to .npy file
-- `verbose` (bool): Print loading details
-
-**Returns:**
-- np.ndarray: Boolean mask array
-
-**Raises:**
-- `FileNotFoundError`: File doesn't exist
-- `ValueError`: Invalid mask format
-
----
-
-### `denoise_directory(model, input_dir, output_dir, config, stage)`
-
-Apply trained model to directory.
-
-**Parameters:**
-- `model` (nn.Module): Trained model
-- `input_dir` (str): Input directory
-- `output_dir` (str): Output directory
-- `config` (dict): Configuration
-- `stage` (str): 'stage1' or 'stage2'
-
-**Returns:**
-- list: Paths to denoised images
-
----
-
-## Module: `pipeline.config`
-
-### `validate_config(config)`
-
-Validate and complete configuration.
-
-**Parameters:**
-- `config` (dict): User configuration
-
-**Returns:**
-- dict: Validated configuration with defaults
-
-**Raises:**
-- `ValueError`: Invalid configuration
-
-**Validation Checks:**
-- Required fields present
-- Stage execution flags valid
-- Mask source configuration correct
-- Numeric parameters in valid ranges
-- Paths exist (for file-based masks)
-
----
-
-### `create_output_directories(config)`
-
-Create output directory structure.
-
-**Parameters:**
-- `config` (dict): Validated configuration
-
-**Returns:**
-- dict: Dictionary of directory paths
-
-**Created Structure:**
-```
-output_dir/experiment_name/
-├── data/
-│   ├── train/
-│   ├── val/
-│   └── test/
-├── stage1/ (if enabled)
-│   ├── model/
-│   ├── logs/
-│   └── results/
-├── stage2/ (if enabled)
-│   ├── model/
-│   ├── logs/
-│   └── results/
-└── final_results/
-```
-
----
-
-## Module: `pipeline.data`
-
-### `split_dataset(input_dir, output_dirs, split_ratio, image_extension, seed, verbose)`
-
-Split images into train/val/test sets.
-
-**Parameters:**
-- `input_dir` (str): Input directory
-- `output_dirs` (dict): Output directory structure
-- `split_ratio` (tuple): (train, val, test) ratios
-- `image_extension` (str): Image file extension
-- `seed` (int): Random seed
-- `verbose` (bool): Print split details
-
-**Returns:**
-- tuple: (train_paths, val_paths, test_paths)
-
-**Example:**
-```python
-paths = split_dataset(
-    './data/',
-    dirs,
-    (0.7, 0.15, 0.15),
-    '.tif',
-    42,
-    verbose=True
-)
-```
-
----
-
-### `create_dataloaders(image_paths, config, stage, stage1_denoised_dir, structured_mask, prediction_kernel, verbose)`
-
-Create PyTorch DataLoaders.
-
-**Parameters:**
-- `image_paths` (tuple): (train, val, test) paths
-- `config` (dict): Configuration
-- `stage` (str): 'stage1' or 'stage2'
-- `stage1_denoised_dir` (str, optional): Stage 1 output dir
-- `structured_mask` (np.ndarray, optional): Structured mask
-- `prediction_kernel` (np.ndarray, optional): Prediction kernel
-- `verbose` (bool): Print loader details
-
-**Returns:**
-- tuple: (train_loader, val_loader, test_loader)
-
-**Example:**
-```python
-train_loader, val_loader, test_loader = create_dataloaders(
-    paths, config, 'stage1', verbose=True
-)
-```
-
----
-
-## See Also
-
-- [Pipeline Guide](../user-guide/pipeline.md) - Usage guide
-- [Configuration Reference](../user-guide/configuration.md) - All parameters
-- [Architecture](../concepts/architecture.md) - System design

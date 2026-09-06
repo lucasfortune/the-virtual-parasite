@@ -13,7 +13,7 @@ Real-world examples demonstrating autoStructN2V on different types of microscopy
 
 <a href="/autostructn2v/examples/electron-microscopy" class="doc-card">
   <h3>Electron Microscopy</h3>
-  <p>Removing scan lines and structured artifacts from EM data</p>
+  <p>Removing directional noise from EM volumes with the routed pipeline</p>
 </a>
 
 </div>
@@ -22,15 +22,14 @@ Real-world examples demonstrating autoStructN2V on different types of microscopy
 
 Each example includes:
 
-- Sample data or instructions to obtain similar data
-- Configuration files
-- Expected results
-- Tips for adapting to your own data
+- Instructions to obtain suitable data (the [PhantEM benchmark](https://doi.org/10.5281/zenodo.22084921) is openly available)
+- Working configuration snippets
+- What to expect, and tips for adapting to your own data
 
 ## Prerequisites
 
 Before running these examples, make sure you have:
 
-1. Installed autoStructN2V (`pip install autostructn2v`)
-2. A CUDA-capable GPU (recommended)
+1. Installed autoStructN2V from source — see [Getting Started](/autostructn2v/docs/getting-started) (the package is not on PyPI)
+2. A CUDA-capable GPU (recommended for training; mask discovery runs on CPU)
 3. Read the [Getting Started](/autostructn2v/docs/getting-started) guide

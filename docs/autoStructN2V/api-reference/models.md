@@ -1,100 +1,42 @@
-# Models API Reference
+# API: models
 
-Technical reference for the `models` module.
+Network architectures. Module: `autoStructN2V.models`.
 
-## Module: `models.unet`
+## `FlexibleUNet` (`models/unet.py`)
 
-### Class: `FlexibleUNet`
+The configurable U-Net both branches train. Architecture options map 1:1 to recipe keys:
 
-Flexible U-Net with configurable depth and resize convolution.
+| Recipe key | Effect |
+|------------|--------|
+| `features`, `num_layers` | Width and depth |
+| `use_resize_conv`, `upsampling_mode` | Resize-convolution upsampling (`ResizeConvolution`) instead of transposed conv — prevents checkerboard artifacts |
+| `remove_top_skip` | N2V2: drop the top skip connection |
+| `use_blurpool` | N2V2: anti-aliased downsampling (`MaxBlurPool2d`) |
+| `activation` | `'relu'` (publication) / `'elu'` (package default) |
+| `norm_type`, `num_groups` | `'batch'` or `'group'` normalization |
+| `init_scale` | Weight-init scaling |
 
-**Constructor:**
+Building blocks exported alongside: `MaxBlurPool2d`, `ResizeConvolution`.
+
+Convenience constructors: `create_standard_unet(...)`, `create_resize_conv_unet(...)`.
+
+## `AutoStructN2VModel` (`models/auto_struct_n2v.py`)
+
+Wrapper that builds a branch model from a recipe: `.create_stage1_model(...)` (N2V branch) and `.create_stage2_model(...)` (StructN2V branch) — the stage names are legacy, the branches are current.
+
+## Factory (`models/factory.py`)
+
+- `create_model(stage, **arch_kwargs)` — build a model for `'n2v'`/`'structn2v'` (legacy `'stage1'`/`'stage2'` accepted)
+- `create_model_from_config(config, stage)` — build directly from a validated pipeline config
+
+## Example
+
 ```python
-FlexibleUNet(features, num_layers, in_channels=1, out_channels=1, 
-             upsampling_mode='bilinear', use_transposed_conv=False)
+from autoStructN2V.models.factory import create_model_from_config
+from autoStructN2V.pipeline import validate_config
+
+config = validate_config({"input_data": "stack.tif"})
+model = create_model_from_config(config, stage="structn2v")
 ```
 
-**Parameters:**
-- `features` (int): Initial number of feature channels
-- `num_layers` (int): Number of down/upsampling layers
-- `in_channels` (int): Input channels (default: 1)
-- `out_channels` (int): Output channels (default: 1)
-- `upsampling_mode` (str): 'bilinear', 'nearest', or 'bicubic'
-- `use_transposed_conv` (bool): Use transposed conv vs resize conv
-
-**Methods:**
-- `forward(x)`: Forward pass
-  - **Input:** (B, C, H, W) tensor
-  - **Output:** (B, C, H, W) tensor
-
-**Example:**
-```python
-model = FlexibleUNet(features=64, num_layers=3)
-output = model(input_tensor)
-```
-
----
-
-### Class: `ResizeConvolution`
-
-Resize convolution module for artifact-free upsampling.
-
-**Constructor:**
-```python
-ResizeConvolution(in_channels, out_channels, upsampling_mode='bilinear', scale_factor=2)
-```
-
----
-
-## Module: `models.auto_struct_n2v`
-
-### Class: `AutoStructN2VModel`
-
-Unified model wrapper for both stages.
-
-**Constructor:**
-```python
-AutoStructN2VModel(features, num_layers, in_channels=1, out_channels=1, 
-                   stage='stage1', use_resize_conv=True, upsampling_mode='bilinear')
-```
-
-**Class Methods:**
-- `create_stage1_model(features, num_layers, **kwargs)`
-- `create_stage2_model(features, num_layers, **kwargs)`
-
----
-
-## Module: `models.factory`
-
-### Function: `create_model`
-
-Factory function for creating models.
-
-**Signature:**
-```python
-create_model(stage, features=64, num_layers=2, use_resize_conv=True, 
-             upsampling_mode='bilinear', **kwargs)
-```
-
-**Parameters:**
-- `stage` (str): 'stage1' or 'stage2'
-- `features` (int): Base feature count
-- `num_layers` (int): Network depth
-- `use_resize_conv` (bool): Use resize convolution
-- `upsampling_mode` (str): Upsampling mode
-
-**Returns:**
-- AutoStructN2VModel instance
-
-**Example:**
-```python
-from autoStructN2V.models import create_model
-
-model = create_model('stage2', features=96, num_layers=3)
-```
-
----
-
-**See Also:**
-- [Training Guide](../user-guide/training.md)
-- [Architecture](../concepts/architecture.md)
+See [Architecture & Training Recipe](/autostructn2v/docs/concepts/architecture) for what the publication recipe sets and why.

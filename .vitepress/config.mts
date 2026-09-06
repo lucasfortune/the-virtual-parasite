@@ -313,10 +313,10 @@ export default defineConfig({
           text: 'Concepts',
           collapsed: false,
           items: [
-            { text: 'Two-Stage Approach', link: '/autostructn2v/docs/concepts/two-stage-approach' },
-            { text: 'Architecture', link: '/autostructn2v/docs/concepts/architecture' },
-            { text: 'Structural Mask Extraction', link: '/autostructn2v/docs/concepts/structural-mask-extraction' },
-            { text: 'ROI Selection', link: '/autostructn2v/docs/concepts/roi-selection' },
+            { text: 'The Routed Pipeline', link: '/autostructn2v/docs/concepts/routed-pipeline' },
+            { text: 'Noise Measurement & Routing', link: '/autostructn2v/docs/concepts/noise-measurement' },
+            { text: 'Spine Mask Extraction', link: '/autostructn2v/docs/concepts/spine-mask-extraction' },
+            { text: 'Architecture & Training Recipe', link: '/autostructn2v/docs/concepts/architecture' },
           ]
         },
         {

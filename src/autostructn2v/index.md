@@ -5,50 +5,46 @@ title: AutoStructN2V
 
 # AutoStructN2V
 
-A two-stage self-supervised deep learning framework for microscopy image denoising that handles both random and structured noise patterns.
+Automated structural noise discovery and routed self-supervised denoising for volumetric electron microscopy.
 
 ## The Problem
 
-Traditional self-supervised denoising methods like Noise2Void work beautifully for random, pixel-independent noise. But many real microscopy images contain **structured noise** - patterns that repeat spatially across the image:
+Self-supervised denoising methods like Noise2Void work beautifully for random, pixel-independent noise. But many real microscopy volumes contain **structured noise** — spatially correlated patterns such as:
 
-- Scan lines from electron microscopy
-- Periodic stripes from camera sensors
-- Wave-like artifacts from scanning mechanisms
-- Fixed-pattern noise from detector imperfections
+- Scan lines and streaks from electron microscopy
+- Periodic stripes from camera sensors and detector readout
+- Directional artifacts from tomographic reconstruction
 
-For structured noise, the core assumption of N2V breaks down. The network can "cheat" by learning the noise pattern from context rather than the true signal.
+For structured noise, the core assumption of N2V breaks down: neighboring pixels share correlated noise, and the network can "cheat" by copying it from context instead of removing it. Structured Noise2Void (StructN2V) fixes this with a structural mask — but that mask traditionally has to be specified **by hand**, from expert reading of autocorrelation plots.
 
 ## The Solution
 
-AutoStructN2V solves this by treating random and structured noise as separate challenges:
+ASN2V replaces the expert with a measurement:
 
-**Stage 1: Standard Noise2Void**
-- Removes random, pixel-independent noise (shot noise, read noise, thermal noise)
-- Uses classic blind-spot masking with random pixel selection
-
-**Stage 2: Structured Noise2Void**
-- Removes correlated, pattern-based noise (scan lines, periodic artifacts)
-- Uses automatically-discovered spatial masks that target the noise pattern
+1. **Measure** — the noise autocorrelation (ACF) is measured directly on the raw volume through automatic background selection. Takes seconds, no training.
+2. **Route** — a calibrated routing decision, taken **before any training**, determines whether structured masking is warranted at all (directionality statistic Dmax against a validated threshold).
+3. **Extract** — when it is, the mask is discovered under explicit design rules: sign-agnostic one-pixel-wide line summaries of the significant ACF features, with an effect-size floor.
+4. **Train once** — exactly one model is trained: StructN2V with the discovered mask, or plain N2V when the noise carries no usable directional structure (the same mechanism with a single-pixel mask).
 
 ```python
 from autoStructN2V.pipeline import run_pipeline
 
-results = run_pipeline({
-    'input_dir': './noisy_images/',
-    'output_dir': './results/',
-    'run_stage1': True,  # Random noise
-    'run_stage2': True   # Structured noise
+summary = run_pipeline({
+    "input_data": "/path/to/noisy_stack.tif",
+    "output_dir": "./results",
+    "mask": {"source": "extractor",
+             "extractor": {"bg_side": "light"}},
 })
+# summary["branch"], summary["route_reason"], summary["denoised_stack"]
 ```
 
 ## Key Features
 
-- **Self-supervised** - No clean reference images required for training
-- **Two-stage pipeline** - Comprehensive handling of random + structured noise
-- **Automatic pattern discovery** - Autocorrelation analysis finds noise patterns
-- **Flexible U-Net** - Resize convolution prevents checkerboard artifacts
-- **ROI selection** - Intelligent patch sampling improves training efficiency
-- **2.5D mode** - Volumetric data support using consecutive slice triplets
+- **Self-supervised** — no clean reference images required
+- **Measurement before training** — the mask and routing decision are available in seconds, on CPU, before any GPU time is spent
+- **Safe fallback** — noise without usable directional structure routes to plain N2V automatically; abstaining is an informative outcome, not an error
+- **One training run** — no multi-stage orchestration; cost comparable to plain N2V
+- **Validated** — on the [PhantEM benchmark](https://doi.org/10.5281/zenodo.22084921), the discovered masks match an oracle mask built from the true noise under identical design rules
 
 ## Documentation
 
@@ -56,17 +52,17 @@ results = run_pipeline({
 
 <a href="/autostructn2v/docs/getting-started" class="doc-card">
   <h3>Getting Started</h3>
-  <p>Installation and quick start guide</p>
+  <p>Installation and the two quickstarts</p>
 </a>
 
 <a href="/autostructn2v/docs/tutorials/basic-usage" class="doc-card">
   <h3>Basic Tutorial</h3>
-  <p>Complete beginner walkthrough</p>
+  <p>Complete walkthrough on benchmark data</p>
 </a>
 
 <a href="/autostructn2v/docs/user-guide/pipeline" class="doc-card">
   <h3>Pipeline Guide</h3>
-  <p>Configure and run the full workflow</p>
+  <p>Configure and run the routed workflow</p>
 </a>
 
 <a href="/autostructn2v/docs/api-reference/pipeline" class="doc-card">
@@ -87,20 +83,25 @@ Understanding the key ideas behind autoStructN2V:
 
 | Concept | Description |
 |---------|-------------|
-| [Two-Stage Approach](/autostructn2v/docs/concepts/two-stage-approach) | How Stage 1 and Stage 2 work together |
-| [Structural Mask Extraction](/autostructn2v/docs/concepts/structural-mask-extraction) | Automatic pattern discovery via autocorrelation |
-| [Architecture](/autostructn2v/docs/concepts/architecture) | Flexible U-Net with resize convolution |
-| [ROI Selection](/autostructn2v/docs/concepts/roi-selection) | Intelligent patch sampling strategy |
+| [The Routed Pipeline](/autostructn2v/docs/concepts/routed-pipeline) | Measure → route → train exactly one model |
+| [Noise Measurement & Routing](/autostructn2v/docs/concepts/noise-measurement) | Automatic background selection, the ACF, and the Dmax gate |
+| [Spine Mask Extraction](/autostructn2v/docs/concepts/spine-mask-extraction) | Sign-agnostic line summaries with an effect-size floor |
+| [Architecture & Training Recipe](/autostructn2v/docs/concepts/architecture) | The N2V2-style U-Net and the frozen publication recipe |
 
-## Module Organization
-
-The autoStructN2V package is organized into six core components:
+## Package Organization
 
 | Component | Purpose |
 |-----------|---------|
-| **models/** | Neural network architectures (FlexibleUNet) |
-| **datasets/** | Data loading with masking, augmentation, and ROI selection |
-| **masking/** | Structural noise extraction and mask generation |
-| **trainers/** | Training loops with early stopping and logging |
-| **inference/** | Patch-based prediction for full images |
-| **pipeline/** | Orchestration of the complete two-stage workflow |
+| **masking/autoextract/** | The method proper: measurement, router, spine mask extraction |
+| **pipeline/** | Routed runner, configuration, data splitting |
+| **models/** | Network architectures (FlexibleUNet, N2V2 options) |
+| **datasets/** | Patch sampling with blind-spot masking |
+| **trainers/** | Training loop with early stopping and logging |
+| **inference/** | Patch-based prediction for full stacks |
+
+## Availability
+
+- **Code:** [github.com/lucasfortune/asn2v](https://github.com/lucasfortune/asn2v) (BSD-3-Clause, results tagged v1.0)
+- **No installation needed:** ASN2V also runs in the browser as part of the [BioMed Workspace](/workspace/) — upload a stack and get the full routed run through the same vendored v1.0 code path
+- **Benchmark data:** [PhantEM on Zenodo](https://doi.org/10.5281/zenodo.22084921) (CC-BY-4.0)
+- **Paper:** preprint link coming soon

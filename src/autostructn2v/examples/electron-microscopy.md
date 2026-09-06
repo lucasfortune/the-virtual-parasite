@@ -5,54 +5,58 @@ title: Electron Microscopy Example
 
 # Electron Microscopy Denoising
 
-::: warning Work in Progress
-This example is currently being written. Check back soon for the complete guide.
-:::
-
-## Overview
-
-Electron microscopy images often contain both random noise and structured artifacts like scan lines. This example demonstrates how autoStructN2V handles both types of noise in a single pipeline.
+Removing directional noise — scan lines, streaks, reconstruction artifacts — from EM volumes with the routed pipeline.
 
 ## The Challenge
 
-EM images typically have:
-- **Shot noise** - Random, pixel-independent noise from electron detection
-- **Scan lines** - Horizontal stripes from the scanning process
-- **Periodic artifacts** - Regular patterns from electronics or beam instability
+EM volumes typically mix:
 
-Standard Noise2Void can remove the shot noise but leaves the scan lines intact.
+- **Shot/read noise** — random, pixel-independent
+- **Directional structure** — scan lines from the acquisition, detector streaks, and in tomograms the directional artifacts of the reconstruction
 
-## The Solution
+Plain Noise2Void removes the random component but can leave the directional one: neighboring pixels share correlated noise, and the blind-spot network copies it from context. Whether that matters for *your* volume is exactly what ASN2V measures before training.
 
-AutoStructN2V's two-stage approach:
+## Dense EM (FIB-SEM / COSEM-style)
 
-1. **Stage 1** removes the random shot noise
-2. **Stage 2** automatically detects and removes the scan line pattern
-
-## Example Code
+Dense cellular material with bright resin background — `bg_side="light"`:
 
 ```python
 from autoStructN2V.pipeline import run_pipeline
 
-config = {
-    'input_dir': './em_images/',
-    'output_dir': './denoised/',
-    'run_stage1': True,
-    'run_stage2': True,
-    # EM-specific settings
-    'patch_size': 64,
-    'mode': '2d'
-}
-
-results = run_pipeline(config)
+summary = run_pipeline({
+    "input_data": "cosem_stack.tif",
+    "output_dir": "./results",
+    "experiment_name": "cosem_routed",
+    "mask": {"source": "extractor",
+             "extractor": {"bg_side": "light"}},
+})
+print(summary["branch"], "|", summary["route_reason"])
 ```
 
-## Expected Results
+## Cryo-ET Tomograms
 
-Coming soon: Before/after comparisons and quality metrics.
+On the real tomograms tested in the paper, flatness-only background selection worked best — `bg_side="off"`:
+
+```python
+"mask": {"source": "extractor", "extractor": {"bg_side": "off"}}
+```
+
+Tomogram noise is often anisotropic (missing wedge, reconstruction direction), which is precisely the directional correlation the spine mask captures.
+
+## What to Expect
+
+- **Seconds after start** you have the routing decision and (on the StructN2V route) the discovered mask — inspect both before the training run commits GPU time.
+- **On the PhantEM EM benchmark**, the routed method reaches a five-seed mean Pearson of **0.668 vs 0.582 for plain N2V**, matching an oracle mask built from the true noise under identical design rules.
+- **On volumes without usable directional structure**, the router falls back to plain N2V — the correct treatment, discovered automatically.
+
+Always look at the residual (`create_difference_map(noisy, denoised)`): it should contain noise, not biology.
+
+## Try It on Open Data
+
+The full pipeline runs out of the box on the [PhantEM benchmark pairs](https://doi.org/10.5281/zenodo.22084921) (six EM volumes with clean ground truth, `bg_side="off"`) — the [Basic Usage tutorial](/autostructn2v/docs/tutorials/basic-usage) walks through it step by step. The paper's split-sum tilt-series experiment uses the open Zenodo record 14922032 (Kim et al. 2025).
 
 ## Adapting to Your Data
 
-- Adjust `patch_size` based on your image resolution
-- Use `mode: '2.5d'` for tomographic stacks
-- See [Configuration](/autostructn2v/docs/user-guide/configuration) for all options
+- Set `bg_side` for your contrast: `'light'` (bright resin), `'dark'` (dark background), `'off'` (flatness-only)
+- If the mask looks implausible, check `bg_side` first, then point `bg_box` at a known-empty region
+- See [Configuration](/autostructn2v/docs/user-guide/configuration) for all options — and prefer the presets/defaults; they are validated operating points

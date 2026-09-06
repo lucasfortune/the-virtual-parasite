@@ -1,302 +1,106 @@
 # Getting Started
 
-This guide will help you install autoStructN2V and run your first denoising pipeline.
+Install ASN2V and run the two quickstarts: mask discovery in seconds, and the full routed pipeline.
 
-## Prerequisites
+## Requirements
 
-Before installing autoStructN2V, ensure you have:
-
-- Python 3.7 or higher
-- pip package manager
-- (Optional) CUDA-capable GPU for faster training
+- Python ≥ 3.10
+- PyTorch ≥ 2.2 (GPU strongly recommended for training; mask discovery runs on CPU)
+- Dependencies: numpy, scipy, scikit-image, PyWavelets, tifffile, matplotlib, tqdm, tensorboard, pillow, mrcfile (all in `requirements.txt`)
 
 ## Installation
 
-### Step 1: Clone the Repository
+Install from source:
 
 ```bash
-git clone https://github.com/yourusername/autoStructN2V.git
-cd autoStructN2V
-```
-
-### Step 2: Create Virtual Environment (Recommended)
-
-Using conda:
-```bash
-conda create -n autostruct python=3.8
-conda activate autostruct
-```
-
-Or using venv:
-```bash
-python -m venv autostruct_env
-source autostruct_env/bin/activate  # On Windows: autostruct_env\Scripts\activate
-```
-
-### Step 3: Install Dependencies
-
-```bash
+git clone https://github.com/lucasfortune/asn2v.git
+cd asn2v
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-```
-
-This will install:
-- PyTorch (with CUDA support if available)
-- torchvision
-- NumPy
-- Pillow (image I/O)
-- scikit-image (image processing)
-- matplotlib (visualization)
-- tqdm (progress bars)
-- tensorboard (training monitoring)
-
-### Step 4: Install autoStructN2V
-
-Install in development mode:
-```bash
 pip install -e .
+python -c "import autoStructN2V; print(autoStructN2V.__version__)"   # 1.0.0
 ```
 
-### Step 5: Verify Installation
+> **GPU note:** match the torch build to your CUDA driver — older drivers may need an explicit `+cuXXX` wheel; the default wheel targets recent CUDA. Without a GPU everything still runs, but training is slow.
+
+## Quickstart 1: Discover a Mask (seconds, CPU, no training)
+
+The fastest way to see what ASN2V finds on your data:
+
+```bash
+python examples/example_extract_mask.py /path/to/noisy_stack.tif
+```
+
+or in Python:
 
 ```python
-import autoStructN2V
-print(autoStructN2V.__version__)  # Should print: 0.1.0
+import numpy as np, tifffile
+from autoStructN2V.masking.autoextract import AutoMaskExtractor
+
+stack = tifffile.imread("/path/to/noisy_stack.tif").astype(np.float32)
+
+extractor = AutoMaskExtractor(bg_side="light")   # 'light' dense EM · 'dark' fluorescence · 'off' flatness-only
+mask, info = extractor.extract_mask(stack)
 ```
 
-## Quick Start: Your First Pipeline
+- `stack` is an `(N, H, W)` array of noisy slices (a multi-page TIFF loads directly to this shape).
+- `mask` is a small 2D boolean StructN2V kernel — center-masked, 180°-symmetric, one center-connected component.
+- `mask is None` means the router **abstained**: the noise has no usable directional structure, and the right tool is plain N2V. This is an informative outcome, not an error.
+- `info` carries the diagnostics: the measured ACF, the routing statistic `dmax`, the abstain `reason` if any, and `mask_rho2` — the fraction of center-pixel noise variance the mask plugs.
 
-### Prepare Your Data
+`bg_side` is the **one required choice**: which intensity side of your images is background (see [Noise Measurement & Routing](/autostructn2v/docs/concepts/noise-measurement)).
 
-1. Create a directory with your noisy images:
-```
-my_data/
-├── image_001.tif
-├── image_002.tif
-├── image_003.tif
-└── ...
-```
-
-2. Images should be:
-   - TIFF format (.tif or .tiff)
-   - Grayscale (single channel)
-   - 8-bit or 16-bit
-
-### Run the Full Pipeline
-
-Create a Python script:
+## Quickstart 2: The Full Routed Pipeline (trains a model)
 
 ```python
 from autoStructN2V.pipeline import run_pipeline
 
-# Minimal configuration
-config = {
-    'input_dir': './my_data/',
-    'output_dir': './results/',
-    'experiment_name': 'my_first_experiment',
-    'device': 'cuda',  # Use 'cpu' if no GPU
-}
-
-# Run pipeline with default settings
-results = run_pipeline(config)
-
-print(f"Training complete!")
-print(f"Stage 1 model: {results['stage1_model_path']}")
-print(f"Stage 2 model: {results['stage2_model_path']}")
-print(f"Denoised images: {results['final_results_dir']}")
+summary = run_pipeline({
+    "input_data": "/path/to/noisy_stack.tif",   # multi-page TIFF (N, H, W)
+    "output_dir": "./results",
+    "mask": {"source": "extractor",
+             "extractor": {"bg_side": "light"}},
+})
+print(summary["branch"], summary["route_reason"])
+print(summary["denoised_stack"])
 ```
 
-Run the script:
+or `python examples/example_run_pipeline.py /path/to/noisy_stack.tif`.
+
+The pipeline measures the noise, routes, trains exactly one model (StructN2V with the discovered mask, or plain N2V), and denoises your full stack. Every unspecified config key gets a documented default — the full knob reference is [`PARAMETER_REFERENCE.md`](https://github.com/lucasfortune/asn2v/blob/main/PARAMETER_REFERENCE.md) in the repository, summarized in the [Configuration guide](/autostructn2v/docs/user-guide/configuration).
+
+### What you get
+
+Under `results/<experiment_name>/`:
+
+| Output | Description |
+|--------|-------------|
+| `config.json` | The fully resolved configuration |
+| `route_decision.json` | Branch, reason, and routing metrics |
+| `model/routed_mask.npy` | The mask that was trained with |
+| `model/model.pth` | The trained model weights |
+| `logs/<timestamp>/` | TensorBoard logs |
+| `final_results/denoised_stack.tif` | Your denoised volume (float32) |
+
+## Baselines Through the Same Pipeline
+
+```python
+"mask": {"source": "center"}                            # plain-N2V baseline
+"mask": {"source": "file", "file_path": "kernel.npy"}   # any manual mask
+```
+
+## Verify the Installation
+
 ```bash
-python denoise_my_images.py
+python tests/test_routed_pipeline.py          # fast checks
+python tests/test_routed_pipeline.py --e2e    # + two tiny CPU trainings
 ```
 
-### What Happens During Execution
-
-1. **Data Splitting**: Images are split into train/validation/test sets (70/15/15 by default)
-2. **Stage 1 Training**: Model learns to remove random noise (~5-20 minutes per epoch)
-3. **Mask Extraction**: Structural noise pattern is identified
-4. **Stage 2 Training**: Model learns to remove structured noise (~10-30 minutes per epoch)
-5. **Inference**: Trained models are applied to all images
-6. **Results**: Denoised images saved to `results/my_first_experiment/final_results/`
-
-### Monitor Training with TensorBoard
-
-While training is running, open a new terminal and run:
-
-```bash
-tensorboard --logdir results/my_first_experiment/
-```
-
-Then navigate to `http://localhost:6006` in your browser to view:
-- Training and validation loss curves
-- Learning rate changes
-- Sample denoised images
-
-## Understanding the Output Directory
-
-After running the pipeline, you'll find:
-
-```
-results/my_first_experiment/
-├── config.json                     # Saved configuration
-├── data/                           # Split dataset
-│   ├── train/
-│   ├── val/
-│   ├── test/
-│   └── stage1_denoised/           # Stage 1 outputs
-├── stage1/
-│   ├── model/
-│   │   └── stage1_model.pth       # Trained Stage 1 model
-│   └── logs/                       # TensorBoard logs
-├── stage2/
-│   ├── model/
-│   │   ├── stage2_model.pth       # Trained Stage 2 model
-│   │   └── stage2_mask.npy        # Learned structural mask
-│   └── logs/
-└── final_results/                  # Final denoised images
-    ├── train/
-    ├── val/
-    └── test/
-```
-
-## Customizing the Pipeline
-
-### Adjusting Training Parameters
-
-```python
-config = {
-    'input_dir': './my_data/',
-    'output_dir': './results/',
-    'experiment_name': 'custom_experiment',
-    'device': 'cuda',
-
-    # General settings
-    'num_epochs': 150,              # More epochs for better results
-    'early_stopping': True,
-    'early_stopping_patience': 15,
-    'verbose': True,                # Show detailed information
-
-    # Stage 1 configuration
-    'stage1': {
-        'patch_size': 64,           # Larger patches
-        'batch_size': 8,            # Larger batches (needs more memory)
-        'features': 96,             # More model capacity
-        'num_layers': 3,            # Deeper network
-        'learning_rate': 2e-4,
-        'patches_per_image': 150,
-    },
-
-    # Stage 2 configuration
-    'stage2': {
-        'patch_size': 96,
-        'batch_size': 4,
-        'features': 96,
-        'num_layers': 3,
-        'learning_rate': 5e-6,
-        'patches_per_image': 250,
-    }
-}
-
-results = run_pipeline(config)
-```
-
-### Running Only Stage 1
-
-```python
-config = {
-    'input_dir': './my_data/',
-    'run_stage1': True,
-    'run_stage2': False,  # Skip Stage 2
-    # ... other parameters
-}
-```
-
-### Running Only Stage 2 with Pre-saved Mask
-
-```python
-config = {
-    'input_dir': './my_data/',
-    'run_stage1': False,
-    'run_stage2': True,
-
-    'stage2': {
-        'mask_source': 'file',
-        'mask_file_path': './saved_masks/my_mask.npy',
-        # ... other stage2 parameters
-    }
-}
-```
+The data-dependent checks read benchmark volumes from the `ASN2V_BENCH_DIR` environment variable — point it at your [PhantEM download](https://doi.org/10.5281/zenodo.22084921).
 
 ## Next Steps
 
-Now that you've successfully run your first pipeline, explore:
-
-1. [**Configuration Guide**](user-guide/configuration.md) - Learn about all configuration options
-2. [**Basic Usage Tutorial**](tutorials/basic-usage.md) - Detailed walkthrough with explanations
-3. [**Two-Stage Approach**](concepts/two-stage-approach.md) - Understand how the stages work together
-4. [**Pipeline Guide**](user-guide/pipeline.md) - Advanced pipeline usage
-
-## Common Issues
-
-### Out of Memory Errors
-
-If you encounter CUDA out of memory errors:
-
-```python
-config = {
-    'stage1': {
-        'batch_size': 2,      # Reduce batch size
-        'patch_size': 32,     # Use smaller patches
-        'features': 32,       # Reduce model capacity
-    },
-    'stage2': {
-        'batch_size': 1,
-        'patch_size': 48,
-        'features': 32,
-    }
-}
-```
-
-### Slow Training
-
-For faster experimentation:
-
-```python
-config = {
-    'num_epochs': 50,        # Fewer epochs
-    'stage1': {
-        'patches_per_image': 50,  # Fewer patches
-    },
-    'stage2': {
-        'patches_per_image': 100,
-    }
-}
-```
-
-### No GPU Available
-
-If you don't have a GPU or CUDA is unavailable:
-
-```python
-config = {
-    'device': 'cpu',         # Use CPU instead
-    'stage1': {
-        'batch_size': 1,     # Smaller batches for CPU
-        'num_layers': 2,     # Shallower network
-    }
-}
-```
-
-For more troubleshooting, see the [Troubleshooting Guide](troubleshooting.md).
-
-## Getting Help
-
-If you encounter issues:
-
-1. Check the [Troubleshooting Guide](troubleshooting.md)
-2. Review the [API Reference](api-reference/pipeline.md) for detailed parameter descriptions
-3. Open an issue on GitHub with your configuration and error message
-
----
-
-**Next**: [Basic Usage Tutorial](tutorials/basic-usage.md) for a detailed walkthrough with explanations.
+- [Basic Usage tutorial](/autostructn2v/docs/tutorials/basic-usage) — a complete walkthrough on benchmark data
+- [The Routed Pipeline](/autostructn2v/docs/concepts/routed-pipeline) — how the method works
+- [Configuration](/autostructn2v/docs/user-guide/configuration) — every knob, package defaults vs publication values
+- [Troubleshooting](/autostructn2v/docs/troubleshooting) — common issues and their fixes
