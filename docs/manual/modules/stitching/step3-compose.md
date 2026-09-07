@@ -20,11 +20,11 @@ seeAlsoTags:
 
 # Composing the Volume
 
-The Compose step turns the placements into a single output volume. Review the placement table, set a few options, and compose; the stitch is streamed slice by slice and the recipe is saved alongside the result.
+Composing turns the placements into a single output volume. It lives in the Align & Compose step: review the placement summary in the toolbar, set the output options, and press Compose; the stitch is streamed slice by slice and the recipe is saved alongside the result.
 
 ## Placement Summary
 
-- A table lists every stack with its z offset, dx, dy, rotation, and the slice range kept
+- The placement summary lists every stack with its z offset, dx, dy, rotation, and the slice range kept
 
 - A per-junction note shows the inferred relationship: "continues in z", "continues in z, merged", or "side by side"
 
