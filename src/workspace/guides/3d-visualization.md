@@ -10,7 +10,7 @@ The 3D Visualization module provides an interactive Three.js-based viewer for ex
 For a conceptual overview, see [3D Visualization](/workspace/docs/modules/visualization/_module).
 
 ![3D Visualization module showing mesh with control panel](/guides/visualization-overview.png)
-*The 3D Visualization module displaying a multi-class mesh with per-class controls*
+*The 3D Visualization module landing page showing step navigation and file selector*
 
 ---
 

@@ -9,9 +9,8 @@ The Preprocessing module prepares a grayscale image stack for the rest of the pi
 
 For a conceptual overview, see [Preprocessing Module](/workspace/docs/modules/preprocess/_module).
 
-<!-- TODO(screenshot): NEW capture needed — module with a stack loaded, Adjust step -->
-![Preprocessing module overview](/guides/preprocess-overview.png)
-*The Preprocessing module in the Adjust step, with live intensity preview and crop overlay*
+![Preprocessing module overview](/guides/preprocessing-overview.png)
+*The Preprocessing module landing page showing step navigation and file selector*
 
 ---
 
@@ -61,9 +60,8 @@ Once you pick a stack, the module reads its dimensions, slice count, data type, 
 
 All operations are configured in one step, with a live preview of intensity changes on the current slice.
 
-<!-- TODO(screenshot): NEW capture needed — crop rectangle drawn + intensity histogram visible -->
-![Adjust step with crop and intensity controls](/guides/preprocess-adjust.png)
-*Crop rectangle overlay and the intensity histogram with window markers*
+![Adjust step with intensity histogram and window markers](/guides/preprocessing-step2a.png)
+*Adjust step with intensity histogram and window markers*
 
 #### Crop and Z Range
 
@@ -75,6 +73,9 @@ Two ways to set the crop rectangle:
 **Z-range trim:** set "first" and "last" to keep only that slice range (1-based, both inclusive). Leave untouched to keep the whole stack.
 
 > **Lineage tip:** when a crop or z-range is applied, the crop origin (x, y, z) is recorded on the output file's lineage — the [Stack Stitching module](/workspace/guides/stack-stitching) reads it to prefill its recipe.
+
+![Adjust step with drawn rectangle](/guides/preprocessing-step2b.png)
+*Adjust step with drawn rectangle*
 
 See [Crop and Z Range](/workspace/docs/modules/preprocess/step2-crop).
 

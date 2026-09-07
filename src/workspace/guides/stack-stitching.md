@@ -9,9 +9,8 @@ The Stack Stitching module joins several stacks into one volume: z-concatenation
 
 For a conceptual overview, see [Stack Stitching Module](/workspace/docs/modules/stitching/_module).
 
-<!-- TODO(screenshot): NEW capture needed — Align step with the magenta/green overlay -->
-![Stack Stitching overlay alignment](/guides/stitching-align.png)
-*The Align step: fixed slice tinted magenta, moving slice green — registered structure turns gray*
+![Stack Stitching landing page](/guides/stackstitching-overview.png)
+*The Stack stitching module landing page showing step navigation, method selection and file selector*
 
 ---
 
@@ -72,6 +71,9 @@ Everything after stack selection happens in one step: aligning each junction, th
 
 For each junction, three decisions: the slice pair, the in-plane transform, and what happens to duplicated sections.
 
+![Stack Stitching step 2](/guides/stackstitching-step2.png)
+*The Align step: fixed slice tinted magenta, moving slice green — registered structure turns gray*
+
 #### Choosing the Slice Pair
 
 Declare one slice from the fixed (upper) stack and one from the moving (lower) stack that show the **same physical section**:
@@ -108,6 +110,10 @@ See [The Overlay Viewer](/workspace/docs/modules/stitching/step2-controls).
 
 If confidence stays low: confirm the pair really shows the same physical section, check for a large rotation, and fall back to manual alignment with the flicker toggle. Any manual move clears the score. See [Aligning a Junction](/workspace/docs/modules/stitching/step2-auto-align).
 
+
+![Stack Stitching align step](/guides/stackstitching-step2.png)
+*The Align step: fixed slice tinted magenta, moving slice green — registered structure turns gray*
+
 #### Overlapping Sections Keep
 
 When sections are duplicated at a junction, choose what happens to them:
@@ -124,8 +130,7 @@ The setting only affects continuation junctions; for side-by-side mosaics there 
 
 #### Composing the Volume
 
-<!-- TODO(screenshot): NEW capture needed — step 2 toolbar with Placement Summary + Output section -->
-![Placement summary and output options](/guides/stitching-compose.png)
+![Placement summary and output options](/guides/stackstitching-compose.png)
 *The placement summary and Output section in the Align & Compose toolbar*
 
 When the junctions are aligned (or the recipe slots filled), compose from the toolbar: the **Placement Summary** lists every stack with its z offset, dx, dy, rotation, and kept slice range, plus a per-junction note: *"continues in z"*, *"continues in z, merged"*, or *"side by side"*. Seam handling is automatic: images get feathered seams; label maps use nearest-neighbor with hard seams by design.

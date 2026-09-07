@@ -10,7 +10,7 @@ The Image Viewer module lets you browse and inspect TIFF image stacks with two v
 For a conceptual overview, see [Image Viewer](/workspace/docs/modules/imageviewer/_module).
 
 ![Image Viewer module showing gallery mode with slice navigation](/guides/imageviewer-overview.png)
-*The Image Viewer in gallery mode displaying a slice with zoom and navigation controls*
+*The Image Viewer module landing page showing step navigation and file selector*
 
 ---
 
@@ -28,7 +28,7 @@ For a conceptual overview, see [Image Viewer](/workspace/docs/modules/imageviewe
 
 ### Step 1: Image Selection
 
-Select the TIFF stack you want to view.
+Select the TIFF stack (or stacks) you want to view.
 
 ![Step 1 showing file selection with validation result](/guides/imageviewer-step1.png)
 *Step 1 file selection with validation status display*
@@ -150,6 +150,9 @@ When you added two or more stacks in Step 1, the viewer shows them together:
 
 - **Gallery** — one pane per stack, all driven by one shared slice slider, zoom, and pan, so the same z position and view stay aligned across stacks. A shorter stack clamps to its last slice and shows an "end of stack" badge.
 - **Thumbnails** — a table with one column per stack and one row per slice index, so the same depth lines up across stacks. Click a cell to open that slice in the comparison gallery.
+
+![Comparison mode with twos stacks displayed](/guides/imageviewer-compare.png)
+*Comparison mode with twos stacks displayed*
 
 The toolbar shows "Comparing N stacks" instead of a single filename.
 

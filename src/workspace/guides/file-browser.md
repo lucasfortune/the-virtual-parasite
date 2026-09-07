@@ -250,6 +250,9 @@ Right-click any file to open the context menu:
   - File ID (for technical reference)
   - **Processing History**: the lineage chain (Original Upload, Denoising, Segmentation, Mesh Generation, Preprocessing, Stitching, Segmentation Cleanup, Format Conversion, Duplicated, Split)
 
+![Screenshot: File info modal showing metadata and processing history](/guides/file-browser-file-info.png)
+*File info modal displaying metadata and processing history*
+
 **View JSON**
 
 - **How**: Right-click a `.json` file → View JSON
@@ -261,8 +264,6 @@ Right-click any file to open the context menu:
 - **Conversions**: TIFF ↔ MRC (voxel size carried through), and mesh `.obj` to STL, PLY, or glTF (GLB)
 - **Result**: a new file tagged `converted` is added to the workspace
 
-![Screenshot: File info modal showing metadata and processing history](/guides/file-browser-file-info.png)
-*File info modal displaying metadata and processing history*
 
 #### TIFF Stack Operations
 

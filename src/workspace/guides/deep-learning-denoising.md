@@ -7,9 +7,8 @@ title: Deep Learning Denoising
 
 Remove noise from microscopy images using self-supervised deep learning. No clean reference images required.
 
-<!-- TODO(screenshot): recapture — old image shows the retired method/mode UI -->
 ![DL Denoising Module Overview](/guides/denoising-dl-overview.png)
-*The DL Denoising module showing method selection and workflow options*
+*The DL Denoising module landing page showing step navigation, method selection and workflow options*
 
 ---
 
@@ -90,7 +89,6 @@ Start
 
 Step 1 guides you through two decisions: method and workflow.
 
-<!-- TODO(screenshot): recapture — old image shows the retired 2D/2.5D toggle -->
 ![Step 1 Method Selection](/guides/denoising-dl-step1.png)
 *Select your denoising method, then choose a workflow*
 
@@ -162,7 +160,6 @@ Each recipe form has two groups:
 
 For N2V, you'll see a single configuration form:
 
-<!-- TODO(screenshot): recapture — layout changed to Training Budget + Advanced Options groups -->
 ![N2V Configuration](/guides/denoising-dl-step2-n2v.png)
 *N2V configuration with Training Budget and Advanced Options*
 
@@ -170,7 +167,6 @@ For N2V, you'll see a single configuration form:
 
 For autoStructN2V, two recipe columns appear side by side: the **N2V branch** and the **StructN2V branch**. The noise measurement routes each run to exactly one branch and only that branch trains — but you configure both here so either outcome is ready.
 
-<!-- TODO(screenshot): recapture — columns are now "N2V branch" / "StructN2V branch", plus Noise Measurement section -->
 ![autoStructN2V Configuration](/guides/denoising-dl-step2-autostructn2v.png)
 *autoStructN2V configuration: N2V branch (left), StructN2V branch (right)*
 
@@ -238,9 +234,8 @@ Right after you press **Start Denoising**, background regions are selected from 
 
 The run pauses and shows the decision before any training:
 
-<!-- TODO(screenshot): NEW capture needed — routing decision card + mask review panel -->
-![Routing decision and mask review](/guides/denoising-dl-routing-review.png)
-*The approval pause: route decision card (left) and discovered mask with extractor parameters (right)*
+![Routing decision and mask review](/guides/denoising-dl-step3a-autostructn2v.png)
+*The approval pause: route decision card (top) and discovered mask with extractor parameters (bottom)*
 
 **The decision card** shows the chosen branch, the reason, the Dmax statistic against its threshold (0.012), and — for the StructN2V route — the mask leak coverage Σρ² (the fraction of the center pixel's noise variance the mask covers). See [Routing Decision](/workspace/docs/modules/denoising-dl/routing-decision).
 
@@ -262,8 +257,7 @@ If the mask comes back with very few active pixels, a **"Low Structural Noise De
 
 Exactly one model trains with the approved mask, then your full stack is denoised. There are no separate stages anymore — total time is comparable to a plain N2V run (the old two-stage flow took roughly twice as long).
 
-<!-- TODO(screenshot): recapture — old image shows the retired three-phase stage interface -->
-![autoStructN2V Training](/guides/denoising-dl-step3-autostructn2v.png)
+![autoStructN2V Training](/guides/denoising-dl-step3b-autostructn2v.png)
 *The routed branch training after mask approval*
 
 ---

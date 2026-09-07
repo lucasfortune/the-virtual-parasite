@@ -10,7 +10,7 @@ The Quick Annotation Tool is a browser-based painting interface for creating gro
 For a conceptual overview, see [Annotation](/workspace/docs/modules/annotation/_module).
 
 ![Annotation module showing the painting interface with toolbar](/guides/annotation-overview.png)
-*The Annotation Tool interface with canvas, toolbar, and class management*
+*The Annotation Tool module landing page showing step navigation and file selector*
 
 ---
 

@@ -10,7 +10,7 @@ The Filter-Based Denoising module removes noise from TIFF image stacks using tra
 For a conceptual overview, see [Filter-Based Denoising](/workspace/docs/modules/denoising-filter/_module).
 
 ![Filter Denoising module showing configuration options](/guides/denoising-filter-overview.png)
-*The Filter Denoising module with method selection and parameter controls*
+*The Filter Denoising module landing page showing step navigation and file selector*
 
 ---
 

@@ -9,9 +9,8 @@ The Segmentation Cleanup module corrects and measures a labeled segmentation sta
 
 For a conceptual overview, see [Segmentation Cleanup Module](/workspace/docs/modules/segcleanup/_module).
 
-<!-- TODO(screenshot): NEW capture needed — editor with labels over grayscale underlay -->
-![Segmentation Cleanup editor](/guides/segcleanup-editor.png)
-*The Edit & Quantify step: painting tools, class list, cleanup panel, and the quantification table*
+![Segmentation Cleanup step 1](/guides/segcleanup-overview.png)
+*Segmentation cleanup module landing page showing step navigation and file selector*
 
 ---
 
@@ -47,6 +46,7 @@ See [Selecting a Segmentation](/workspace/docs/modules/segcleanup/step1-segmenta
 ---
 
 ### Step 2: Edit & Quantify
+
 
 Painting, automated cleanup, and quantification live side by side in one step.
 
@@ -84,6 +84,9 @@ When you paint, the metrics go stale — a *"labels edited"* badge appears with 
 #### Saving the Result
 
 **Save as New File** writes the current labels (painted edits + applied cleanup) to a new TIFF (default name `cleaned`), tagged as a segmentation result so Mesh Generation and Stitching accept it directly. Saving does not end the session — you can keep editing and save again. See [Saving the Result](/workspace/docs/modules/segcleanup/step2-save).
+
+![Segmentation edit step wit tools and automated cleanup sections](/guides/segcleanup-step2.png)
+*Segmentation edit step wit tools and automated cleanup sections*
 
 ---
 

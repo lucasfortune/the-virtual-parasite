@@ -10,7 +10,7 @@ The Mesh Generation module converts segmented image stacks into 3D surface meshe
 For a conceptual overview, see [Mesh Generation](/workspace/docs/modules/mesh/_module).
 
 ![Mesh Generation module showing generation complete with download options](/guides/mesh-overview.png)
-*The Mesh Generation module after successfully creating a 3D mesh with download options*
+*The Mesh Generation module landing page showing step navigation and file selector*
 
 ---
 
