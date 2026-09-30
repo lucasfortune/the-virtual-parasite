@@ -229,6 +229,8 @@ export default defineConfig({
                 { text: 'Training Pairs', link: '/workspace/docs/modules/segmentation/step1-training-pairs' },
                 { text: 'Config File', link: '/workspace/docs/modules/segmentation/step1-config-file' },
                 { text: 'Model File', link: '/workspace/docs/modules/segmentation/step1-model-file' },
+                { text: 'bioimage.io Models', link: '/workspace/docs/modules/segmentation/step1-bioimageio' },
+                { text: 'bioimage.io Package Upload', link: '/workspace/docs/modules/segmentation/step1-bioimageio-package' },
                 { text: 'Training Configuration', link: '/workspace/docs/modules/segmentation/step2' },
                 { text: 'Patch Size', link: '/workspace/docs/modules/segmentation/config-patch-size' },
                 { text: 'Batch Size', link: '/workspace/docs/modules/segmentation/config-batch-size' },
@@ -244,6 +246,7 @@ export default defineConfig({
                 { text: 'Dice Score', link: '/workspace/docs/modules/segmentation/step3-dice-score' },
                 { text: 'Running Inference', link: '/workspace/docs/modules/segmentation/step4' },
                 { text: 'Inference Data', link: '/workspace/docs/modules/segmentation/step4-inference-data' },
+                { text: 'Output Conversion', link: '/workspace/docs/modules/segmentation/step4-output-conversion' },
               ]
             },
             {

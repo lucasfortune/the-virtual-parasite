@@ -39,16 +39,21 @@ For more background, see [Segmentation Overview](/workspace/docs/modules/segment
 2. Expand "Use Pretrained Model" and select your model (.pth) and config (.json) files
 3. Skip to Step 4, upload inference data, and run segmentation
 
+### bioimage.io Workflow
+1. Launch the **Segmentation** module from the Hub
+2. Expand "Use a bioimage.io Model" and pick a model from the zoo list (or an uploaded package)
+3. Skip to Step 4, choose the output conversion, upload inference data, and run segmentation
+
 ---
 
 ## Step-by-Step Guide
 
 ### Step 1: Training Data or Model Selection
 
-This step offers two mutually exclusive workflows. Expanding one section will collapse the other. For help choosing, see [Workflow Choice](/workspace/docs/modules/segmentation/step1-workflow-choice).
+This step offers three mutually exclusive workflows. Expanding one section collapses the others. For help choosing, see [Workflow Choice](/workspace/docs/modules/segmentation/step1-workflow-choice).
 
 ![Step 1 Workflow Selection](/guides/segmentation-step1.png)
-*Choose between training a new model or importing an existing one*
+*Choose between training a new model, importing an existing one, or running a bioimage.io model*
 
 #### Option A: Train from Scratch
 
@@ -83,6 +88,19 @@ Expand the **Use Pretrained Model** section to import an existing model:
 | **Config File** | .json | Model configuration (architecture, classes). See [Config File](/workspace/docs/modules/segmentation/step1-config-file) |
 
 > **Note:** When using a pretrained model, Steps 2 and 3 are skipped. After validation, click **Next** to proceed directly to Step 4 (Inference).
+
+#### Option C: Use a bioimage.io Model
+
+Expand the **Use a bioimage.io Model** section to run a published model from the [bioimage.io model zoo](https://bioimage.io) without training. See [bioimage.io Models](/workspace/docs/modules/segmentation/step1-bioimageio).
+
+| Input | Description |
+|-------|-------------|
+| **Zoo list** | Searchable list of the zoo models the workspace can run: PyTorch weights, one grayscale input, 2D or 3D, and no missing Python packages for the model's architecture code. Denoising and other non-segmentation models are hidden unless you tick *Show all runnable models* |
+| **Uploaded package** | A bioimage.io package (.zip) uploaded through the file browser under Model Files. See [bioimage.io Package Upload](/workspace/docs/modules/segmentation/step1-bioimageio-package) |
+
+Selecting a model shows a card with its input geometry, output channels, weight format, license and citation. Only the description is fetched at this point; the weights are downloaded when the first run starts and kept in a server-wide cache. A small model card is written to your workspace so that every result records which model produced it.
+
+> **Note:** As with an imported model, Steps 2 and 3 are skipped. Zoo models are trained on their own datasets, so a first result on unlike data can be rough; correct it in the Annotation module and train a workspace model on the corrected annotation.
 
 ---
 
@@ -183,14 +201,28 @@ Apply your trained (or imported) model to segment new data. See [Inference Overv
 2. Select a TIFF stack from your workspace or upload a new one
 3. The data should be similar to your training images (same modality, resolution)
 
-> **Dimension requirement:** each slice is segmented whole (no patch tiling), so the smallest slice dimension must be between 32 and 4096 pixels **and divisible by 2^layers** (e.g. 16 for a 4-layer model). The module runs a pre-flight check and shows a warning banner if a stack is incompatible.
+> **Dimension requirement:** each slice is segmented whole (no patch tiling), so the smallest slice dimension must be between 32 and 4096 pixels **and divisible by 2^layers** (e.g. 16 for a 4-layer model). The module runs a pre-flight check and shows a warning banner if a stack is incompatible. This rule does not apply to bioimage.io models, which run tiled.
 
 For data requirements, see [Inference Data](/workspace/docs/modules/segmentation/step4-inference-data).
+
+#### Output Conversion (bioimage.io models)
+
+A zoo model returns one or more probability channels rather than class labels. The **Output conversion** block above the Run button turns them into a class map:
+
+![Output conversion block](/guides/segmentation-output-conversion.png)
+*Choose how the model's channels become class labels; controls that do not apply to the loaded model are greyed out*
+
+| Rule | Result |
+|------|--------|
+| **One class per channel** | Each channel is thresholded on its own; channel 1 becomes class 1, channel 2 becomes class 2, later channels win where they overlap. Right for foreground plus boundary models and for single-channel models |
+| **Argmax** | Every pixel takes the channel with the highest value; channel 0 is background. Right for models whose channels are mutually exclusive classes (softmax) |
+
+The workspace preselects a rule from the model description; the threshold defaults to 0.5. For a single-channel model both rules are greyed out with *One class per channel* selected, and with *Argmax* selected the threshold is greyed out. Both settings are recorded in the result's metadata file. See [Output Conversion](/workspace/docs/modules/segmentation/step4-output-conversion).
 
 #### Run Segmentation
 
 1. Click **Run Segmentation** after selecting valid data
-2. Monitor the progress bar showing slice-by-slice processing
+2. Monitor the progress bar showing slice-by-slice processing (block by block for a 3D zoo model; the first run of a zoo model starts with a weights download)
 3. Wait for the completion message
 
 #### After Completion
@@ -244,6 +276,8 @@ These files appear in your workspace file browser after processing completes.
 - [Training Pairs](/workspace/docs/modules/segmentation/step1-training-pairs)
 - [Model File](/workspace/docs/modules/segmentation/step1-model-file)
 - [Config File](/workspace/docs/modules/segmentation/step1-config-file)
+- [bioimage.io Models](/workspace/docs/modules/segmentation/step1-bioimageio)
+- [bioimage.io Package Upload](/workspace/docs/modules/segmentation/step1-bioimageio-package)
 
 ### Step 2: Configuration
 - [Training Configuration](/workspace/docs/modules/segmentation/step2)
@@ -265,4 +299,5 @@ These files appear in your workspace file browser after processing completes.
 ### Step 4: Inference
 - [Run Inference](/workspace/docs/modules/segmentation/step4)
 - [Inference Data](/workspace/docs/modules/segmentation/step4-inference-data)
+- [Output Conversion](/workspace/docs/modules/segmentation/step4-output-conversion)
 
