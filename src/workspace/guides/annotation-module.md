@@ -43,6 +43,7 @@ Choose your source image and annotation mode.
 | **New Annotation** | Start fresh on a raw TIFF image | Creating annotations from scratch |
 | **Resume** | Continue an unfinished annotation | Returning to work in progress |
 | **Edit** | Modify an existing completed annotation | Refining previous work |
+| **Correct** | Open a segmentation result (inference or cleanup output) as labels over its raw stack; saving creates a new annotation | Fixing a prediction to train on it again ("Correct in Annotation" at the end of a segmentation run lands here) |
 
 #### File Requirements
 
@@ -52,7 +53,7 @@ Choose your source image and annotation mode.
 
 > **Tip:** Large files work but may affect performance. Consider splitting very large stacks.
 
-> **Note (Resume/Edit):** both modes need the original image behind the annotation. The tool finds it automatically through the file's lineage; when it can't (an uploaded mask with no lineage, or a deleted source), a picker appears. The image you pick must match the annotation's width, height, and slice count.
+> **Note (Resume/Edit/Correct):** all three modes need the original image behind the labels. The tool finds it automatically through the file's lineage, following the chain as far as needed; when it can't (an uploaded mask with no lineage, or a deleted source), a picker appears. The image you pick must match the annotation's width, height, and slice count.
 
 For more details, see [Source Image](/workspace/docs/modules/annotation/step1-source-image).
 

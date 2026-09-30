@@ -59,13 +59,19 @@ Expand the **Train from Scratch** section to upload your training data:
 | **Raw Images** | TIFF stack | Your microscopy images for training. See [Raw Images](/workspace/docs/modules/segmentation/step1-raw-images) |
 | **Annotations** | TIFF stack | Corresponding segmentation masks (same dimensions). See [Annotations](/workspace/docs/modules/segmentation/step1-annotations) |
 
-Both files must have matching dimensions (width, height, number of slices).
+Both files of a pair must have matching dimensions (width, height, number of slices).
 
 **To select files:**
 1. Click the file selector for each input type
 2. Choose a file from your workspace or upload a new one
 3. Wait for validation to complete (green checkmark indicates success)
-4. Click **Next: Configuration** when both files are validated
+4. Click **Next: Configuration** when the pair is validated
+
+**Several stacks.** A run can train on more than one raw/annotation pair, for example annotated stacks from different acquisitions. Click **Add pair** to keep the selected pair in the list and pick the next one; remove a pair with the cross at the end of its row. Pairs may differ in width and height. See [Training Pairs](/workspace/docs/modules/segmentation/step1-training-pairs).
+
+**Partially annotated stacks.** Only slices with at least one labelled pixel are used; empty slices are skipped, so you can annotate every fifth slice and train on those. On a slice you did label, every unlabelled pixel counts as background, so label included slices completely. The validation summary shows how many slices of each pair are labelled.
+
+**Predictions as masks.** The Annotations selector also lists segmentation results (inference output, cleanup output) under Recent Results, so a corrected prediction can be trained on directly.
 
 #### Option B: Use Pretrained Model
 
@@ -84,7 +90,7 @@ Expand the **Use Pretrained Model** section to import an existing model:
 
 *This step is only shown for the Train from Scratch workflow.*
 
-Configure how your model will be trained. Default values work well for most cases. Fields are validated in real time — in particular, patch size is checked against your image dimensions and the chosen number of layers. See [Training Configuration](/workspace/docs/modules/segmentation/step2).
+Configure how your model will be trained. Default values work well for most cases. Fields are validated in real time; in particular, patch size is checked against the smallest slice of your training pairs and the chosen number of layers. The validation split is the share of each pair's labelled slices held back to score the model (a contiguous block at the end of the labelled slices, so neighbouring near-identical slices do not leak into validation). There is no separate test split; the best validation Dice is the number reported for the run. See [Training Configuration](/workspace/docs/modules/segmentation/step2).
 
 ![Step 2 Configuration](/guides/segmentation-step2.png)
 *Training configuration with dataset, architecture, and training parameters*
@@ -95,6 +101,7 @@ Configure how your model will be trained. Default values work well for most case
 |-----------|---------|---------|--------------|
 | **Patch Size** | 64 | 32, 48, 64, 96, 128, 256 | [Patch Size](/workspace/docs/modules/segmentation/config-patch-size) |
 | **Patches per Image** | 50 | 1–100 | [Patches per Image](/workspace/docs/modules/segmentation/config-patches-per-image) |
+| **Validation Split** | 15% | 5–40% | [Validation Split](/workspace/docs/modules/segmentation/config-validation-split) |
 | **Batch Size** | 8 | 1, 2, 4, 8, 16, 32 | [Batch Size](/workspace/docs/modules/segmentation/config-batch-size) |
 | **Data Augmentation** | Enabled | On/Off | [Augmentation](/workspace/docs/modules/segmentation/config-augmentation) |
 
@@ -152,6 +159,8 @@ Good training shows both curves converging, with validation metrics close to tra
 
 #### Training Completion
 
+When the run starts, the progress panel states how many labelled slices it trains on and how many are held back for validation.
+
 When training finishes:
 - The **Next: Inference** button becomes enabled
 - Your trained model is automatically saved
@@ -186,12 +195,13 @@ For data requirements, see [Inference Data](/workspace/docs/modules/segmentation
 
 #### After Completion
 
-When segmentation finishes, you'll see two options:
+When segmentation finishes, you'll see three options:
 
 | Action | Description |
 |--------|-------------|
 | **Open in Image Viewer** | View your segmentation results immediately. See the [Image Viewer Guide](/workspace/guides/image-viewer) for navigation controls |
-| **Start New Analysis** | Reset the module to begin a new training or inference workflow |
+| **Correct in Annotation** | Open the result in the Annotation module as labels over the raw stack. Fix it with brush, eraser and fill, then create the annotation: it appears in the Annotations selector of Step 1, ready to train on together with your other pairs. Repeating this loop is usually the fastest way to improve a model |
+| **Start New Run** | Reset the module to begin a new training or inference workflow |
 
 ---
 
@@ -231,6 +241,7 @@ These files appear in your workspace file browser after processing completes.
 - [Workflow Choice](/workspace/docs/modules/segmentation/step1-workflow-choice)
 - [Raw Images](/workspace/docs/modules/segmentation/step1-raw-images)
 - [Annotations](/workspace/docs/modules/segmentation/step1-annotations)
+- [Training Pairs](/workspace/docs/modules/segmentation/step1-training-pairs)
 - [Model File](/workspace/docs/modules/segmentation/step1-model-file)
 - [Config File](/workspace/docs/modules/segmentation/step1-config-file)
 
@@ -238,6 +249,7 @@ These files appear in your workspace file browser after processing completes.
 - [Training Configuration](/workspace/docs/modules/segmentation/step2)
 - [Patch Size](/workspace/docs/modules/segmentation/config-patch-size)
 - [Patches per Image](/workspace/docs/modules/segmentation/config-patches-per-image)
+- [Validation Split](/workspace/docs/modules/segmentation/config-validation-split)
 - [Batch Size](/workspace/docs/modules/segmentation/config-batch-size)
 - [Augmentation](/workspace/docs/modules/segmentation/config-augmentation)
 - [Number of Features](/workspace/docs/modules/segmentation/config-num-features)
