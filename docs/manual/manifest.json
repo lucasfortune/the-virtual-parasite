@@ -82,7 +82,8 @@
       "path": "modules/annotation/step2-tools.md",
       "seeAlsoManual": [
         "annotation.step2.brush-size",
-        "annotation.step2.classes"
+        "annotation.step2.classes",
+        "annotation.step2.history"
       ],
       "seeAlsoTags": [
         "tools",
@@ -147,7 +148,8 @@
       "path": "modules/annotation/step2-classes.md",
       "seeAlsoManual": [
         "annotation.step2.tools",
-        "annotation"
+        "annotation",
+        "annotation.step2.interpolation"
       ],
       "seeAlsoTags": [
         "classes",
@@ -2381,6 +2383,52 @@
       "seeAlsoTags": [
         "workspace",
         "navigation"
+      ]
+    },
+    "annotation.step2.interpolation": {
+      "id": "annotation.step2.interpolation",
+      "title": "Slice Interpolation",
+      "displayTitle": "Slice Interpolation",
+      "category": "tools",
+      "module": "annotation",
+      "tags": [
+        "annotation",
+        "interpolation",
+        "classes",
+        "slices",
+        "keyframes"
+      ],
+      "path": "modules/annotation/step2-interpolation.md",
+      "seeAlsoManual": [
+        "annotation.step2.classes",
+        "annotation.step2.history"
+      ],
+      "seeAlsoTags": [
+        "classes",
+        "slices"
+      ]
+    },
+    "annotation.step2.suggest": {
+      "id": "annotation.step2.suggest",
+      "title": "Suggestions (Pixel Classifier)",
+      "displayTitle": "Suggestions (Pixel Classifier)",
+      "category": "tools",
+      "module": "annotation",
+      "tags": [
+        "annotation",
+        "classifier",
+        "suggestions",
+        "machine-learning",
+        "random-forest"
+      ],
+      "path": "modules/annotation/step2-suggest.md",
+      "seeAlsoManual": [
+        "annotation.step2.classes",
+        "annotation.step2.interpolation"
+      ],
+      "seeAlsoTags": [
+        "classes",
+        "labels"
       ]
     }
   },

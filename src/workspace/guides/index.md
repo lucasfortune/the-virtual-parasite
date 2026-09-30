@@ -48,7 +48,7 @@ Step-by-step guides and best practices to help you get the most out of the BioMe
 
 <a href="./annotation-module" class="doc-card">
   <h3>Annotation Module</h3>
-  <p>Paint ground-truth segmentation masks with brush tools and class management</p>
+  <p>Paint ground-truth masks, interpolate classes between slices, and let a pixel classifier suggest labels</p>
 </a>
 
 <a href="./image-viewer" class="doc-card">

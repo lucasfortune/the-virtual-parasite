@@ -212,6 +212,8 @@ export default defineConfig({
                 { text: 'Drawing Tools', link: '/workspace/docs/modules/annotation/step2-tools' },
                 { text: 'Brush Size', link: '/workspace/docs/modules/annotation/step2-brush-size' },
                 { text: 'Classes', link: '/workspace/docs/modules/annotation/step2-classes' },
+                { text: 'Slice Interpolation', link: '/workspace/docs/modules/annotation/step2-interpolation' },
+                { text: 'Suggestions (Pixel Classifier)', link: '/workspace/docs/modules/annotation/step2-suggest' },
                 { text: 'History & Autosave', link: '/workspace/docs/modules/annotation/step2-history' },
               ]
             },

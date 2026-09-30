@@ -37,7 +37,7 @@ Convert segmented image stacks into 3D surface meshes for visualization, analysi
 | [Preprocessing](/workspace/docs/modules/preprocess/_module) | Crop, trim, flip/rotate, downscale, and intensity-adjust stacks non-destructively |
 | [Deep Learning Denoising](/workspace/docs/modules/denoising-dl/_module) | Self-supervised denoising with auto-routed autoStructN2V and N2V |
 | [Filter Denoising](/workspace/docs/modules/denoising-filter/_module) | Classical Gaussian and Non-Local Means filtering |
-| [Quick Annotation](/workspace/docs/modules/annotation/_module) | Browser-based annotation tool for ground truth creation |
+| [Quick Annotation](/workspace/docs/modules/annotation/_module) | Browser-based annotation tool with slice interpolation and classifier suggestions |
 | [U-Net Segmentation](/workspace/docs/modules/segmentation/_module) | Train and run semantic segmentation models |
 | [Segmentation Cleanup](/workspace/docs/modules/segcleanup/_module) | Paint corrections, automated cleanup, and per-class quantification |
 | [Stack Stitching](/workspace/docs/modules/stitching/_module) | Join stacks in z or as mosaics, with reusable stitch recipes |
