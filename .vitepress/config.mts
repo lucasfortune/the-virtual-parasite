@@ -232,6 +232,7 @@ export default defineConfig({
                 { text: 'bioimage.io Models', link: '/workspace/docs/modules/segmentation/step1-bioimageio' },
                 { text: 'bioimage.io Package Upload', link: '/workspace/docs/modules/segmentation/step1-bioimageio-package' },
                 { text: 'Training Configuration', link: '/workspace/docs/modules/segmentation/step2' },
+                { text: 'Starting Point', link: '/workspace/docs/modules/segmentation/config-starting-point' },
                 { text: 'Patch Size', link: '/workspace/docs/modules/segmentation/config-patch-size' },
                 { text: 'Batch Size', link: '/workspace/docs/modules/segmentation/config-batch-size' },
                 { text: 'Learning Rate', link: '/workspace/docs/modules/segmentation/config-learning-rate' },

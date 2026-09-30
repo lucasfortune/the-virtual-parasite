@@ -96,7 +96,7 @@ Expand the **Use a bioimage.io Model** section to run a published model from the
 | Input | Description |
 |-------|-------------|
 | **Zoo list** | Searchable list of the zoo models the workspace can run: PyTorch weights, one grayscale input, 2D or 3D, and no missing Python packages for the model's architecture code. Denoising and other non-segmentation models are hidden unless you tick *Show all runnable models* |
-| **Uploaded package** | A bioimage.io package (.zip) uploaded through the file browser under Model Files, or exported from one of your own trained models with the file browser's *Export as bioimage.io package…* action (see [bioimage.io Export](/workspace/docs/modules/file-browser/bioimageio-export)). See [bioimage.io Package Upload](/workspace/docs/modules/segmentation/step1-bioimageio-package) |
+| **Uploaded package** | A bioimage.io package (.zip) uploaded through the file browser under Model Files, exported from one of your own trained models with the file browser's *Export as bioimage.io package…* action (see [bioimage.io Export](/workspace/docs/modules/file-browser/bioimageio-export)), or produced by fine-tuning in Step 2. See [bioimage.io Package Upload](/workspace/docs/modules/segmentation/step1-bioimageio-package) |
 
 Selecting a model shows a card with its input geometry, output channels, weight format, license and citation. Only the description is fetched at this point; the weights are downloaded when the first run starts and kept in a server-wide cache. A small model card is written to your workspace so that every result records which model produced it.
 
@@ -112,6 +112,21 @@ Configure how your model will be trained. Default values work well for most case
 
 ![Step 2 Configuration](/guides/segmentation-step2.png)
 *Training configuration with dataset, architecture, and training parameters*
+
+#### Starting Point
+
+Since 1.10.0 a run does not have to start from random weights. The first group of Step 2 offers three starting points; see [Starting Point](/workspace/docs/modules/segmentation/config-starting-point).
+
+| Starting point | What you pick | What comes out |
+|----------------|---------------|----------------|
+| **New model** | Nothing; the architecture below applies | A `.pth` model, as before |
+| **Continue from a workspace model** | A `.pth` model from Model Files (trained here or imported) | A new `.pth` model; features and layers are locked to the parent |
+| **Fine-tune a bioimage.io model** | A package from Model Files (uploaded or exported) or a zoo model from the list | A new bioimage.io package, selected for Step 4 at once and listed under Model Files |
+
+![Starting point](/guides/segmentation-starting-point.png)
+*Step 2 with a zoo model chosen as the starting point*
+
+The choice is checked against your training pairs immediately: a softmax model needs exactly as many annotation classes as it has channels (background included), a single-sigmoid model needs two classes, and the patch size list only offers sizes the model's input rule accepts. Zoo models that predict foreground plus boundaries, 3D models and torchscript-only models cannot be fine-tuned and are not listed. Picking a starting model sets the learning rate to 1e-4 and the epochs to 30 unless you edited those fields. In Step 3 a bioimage.io parent adds the stages *loading the starting model*, *writing the fine-tuned package* and *self-testing the package*; a package that fails its self-test is not kept.
 
 #### Dataset Configuration
 
@@ -281,6 +296,7 @@ These files appear in your workspace file browser after processing completes.
 
 ### Step 2: Configuration
 - [Training Configuration](/workspace/docs/modules/segmentation/step2)
+- [Starting Point](/workspace/docs/modules/segmentation/config-starting-point)
 - [Patch Size](/workspace/docs/modules/segmentation/config-patch-size)
 - [Patches per Image](/workspace/docs/modules/segmentation/config-patches-per-image)
 - [Validation Split](/workspace/docs/modules/segmentation/config-validation-split)
