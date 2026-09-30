@@ -303,6 +303,7 @@ export default defineConfig({
                 { text: 'Uploading Files', link: '/workspace/docs/modules/file-browser/upload' },
                 { text: 'File Categories', link: '/workspace/docs/modules/file-browser/categories' },
                 { text: 'File Operations', link: '/workspace/docs/modules/file-browser/file-operations' },
+                { text: 'bioimage.io Export', link: '/workspace/docs/modules/file-browser/bioimageio-export' },
                 { text: 'Batch Operations', link: '/workspace/docs/modules/file-browser/batch-operations' },
                 { text: 'Search & Filter', link: '/workspace/docs/modules/file-browser/search' },
                 { text: 'Tree Navigation', link: '/workspace/docs/modules/file-browser/tree-navigation' },

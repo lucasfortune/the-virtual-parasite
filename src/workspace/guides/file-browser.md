@@ -248,7 +248,7 @@ Right-click any file to open the context menu:
   - Upload timestamp
   - **Voxel size** (TIFF stacks): read automatically on upload and inherited by derived outputs; click the edit (✏️) button to set x/y/z spacing and unit (µm, nm, mm)
   - File ID (for technical reference)
-  - **Processing History**: the lineage chain (Original Upload, Denoising, Segmentation, Mesh Generation, Preprocessing, Stitching, Segmentation Cleanup, Format Conversion, Duplicated, Split)
+  - **Processing History**: the lineage chain (Original Upload, Denoising, Segmentation, Mesh Generation, Preprocessing, Stitching, Segmentation Cleanup, Format Conversion, bioimage.io Export, Duplicated, Split)
 
 ![Screenshot: File info modal showing metadata and processing history](/guides/file-browser-file-info.png)
 *File info modal displaying metadata and processing history*
@@ -263,6 +263,19 @@ Right-click any file to open the context menu:
 - **How**: Right-click → Convert to…
 - **Conversions**: TIFF ↔ MRC (voxel size carried through), and mesh `.obj` to STL, PLY, or glTF (GLB)
 - **Result**: a new file tagged `converted` is added to the workspace
+
+**Export as bioimage.io package…**
+
+Packages a U-Net trained in the workspace as a [bioimage.io](https://bioimage.io) model (format 0.5) that other tools, the model zoo and the workspace itself can run. See [bioimage.io Export](/workspace/docs/modules/file-browser/bioimageio-export).
+
+- **How**: Right-click a `.pth` model file → Export as bioimage.io package…
+- **Dialog**: package name, license (CC-BY-4.0, MIT, BSD-3-Clause or CC0-1.0) and a sample raw image; the training image is preselected when known
+
+![Screenshot: bioimage.io export dialog with name, license and sample image](/guides/file-browser-bioimageio-export.png)
+*Export dialog for a model file; the status line shows the export stages*
+
+- **Stages**: loading, tracing to TorchScript, packaging, self-test of both weight formats (a few seconds for a small model)
+- **Result**: a zip under Model Files tagged `bioimageio`, with the model description, architecture file, state dict, TorchScript weights, test tensors, cover image and README. Select it in the Segmentation module under Step 1 → Use a bioimage.io Model to run it with tiled inference, or download it for other tools
 
 
 #### TIFF Stack Operations

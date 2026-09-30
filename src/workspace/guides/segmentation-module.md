@@ -96,7 +96,7 @@ Expand the **Use a bioimage.io Model** section to run a published model from the
 | Input | Description |
 |-------|-------------|
 | **Zoo list** | Searchable list of the zoo models the workspace can run: PyTorch weights, one grayscale input, 2D or 3D, and no missing Python packages for the model's architecture code. Denoising and other non-segmentation models are hidden unless you tick *Show all runnable models* |
-| **Uploaded package** | A bioimage.io package (.zip) uploaded through the file browser under Model Files. See [bioimage.io Package Upload](/workspace/docs/modules/segmentation/step1-bioimageio-package) |
+| **Uploaded package** | A bioimage.io package (.zip) uploaded through the file browser under Model Files, or exported from one of your own trained models with the file browser's *Export as bioimage.io package…* action (see [bioimage.io Export](/workspace/docs/modules/file-browser/bioimageio-export)). See [bioimage.io Package Upload](/workspace/docs/modules/segmentation/step1-bioimageio-package) |
 
 Selecting a model shows a card with its input geometry, output channels, weight format, license and citation. Only the description is fetched at this point; the weights are downloaded when the first run starts and kept in a server-wide cache. A small model card is written to your workspace so that every result records which model produced it.
 
