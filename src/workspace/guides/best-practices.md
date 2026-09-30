@@ -242,10 +242,9 @@ Your backup includes:
 
 To restore from a backup:
 
-1. Click **Upload** in the file browser
-2. Select **"Restore Workspace (ZIP)"** from the category dropdown
-3. Choose your backup ZIP file
-4. Confirm the restore
+1. Click **Upload** in the file browser (or drop the ZIP onto the sidebar)
+2. Choose your backup ZIP file; the workspace recognises it as a backup
+3. Confirm the restore
 
 > **Warning:** Restoring **REPLACES** your current workspace. All existing files are deleted before restoration.
 

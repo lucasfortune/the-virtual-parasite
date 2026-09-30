@@ -14,8 +14,8 @@ The File Browser is your central hub for managing all files in your workspace. T
 
 ## Quick Start
 
-1. **Select a category** — Choose a file type from the category dropdown (Raw Images, Annotations, etc.)
-2. **Upload files** — Click the upload button or drag-and-drop files onto the sidebar
+1. **Upload files** — Click the upload button or drag-and-drop files onto the sidebar; the workspace detects whether a file is an image, an annotation, a model, a bioimage.io package or a workspace backup
+2. **Check the notification** — It names each file and the kind it was filed as; right-click a file to correct a wrong guess
 3. **Navigate files** — Click folder arrows to expand/collapse, click files to select
 4. **Perform actions** — Right-click any file for the context menu with download, rename, and delete options
 5. **Use batch operations** — Select multiple files with checkboxes, then download as ZIP or delete in bulk
@@ -75,8 +75,8 @@ Below the user info, you'll find workspace controls and statistics:
 
 Click this button to export your entire workspace:
 - Creates a ZIP archive named `workspace_<timestamp>.zip` with all your files
-- Includes uploads, results, and models with folder structure preserved
-- Excludes cache directories (`.thumbnails`, `.slices`, `.mesh-previews`, `.preprocess`, `.segcleanup`) — all regenerated automatically after a restore
+- Includes uploads, results, and models with the folder structure preserved (the archive reads like the tree: `results/segmentation/seg3/trypB_seg.tif`)
+- Excludes cache directories (`.thumbnails`, `.slices`, `.mesh-previews`, `.preprocess`, `.segcleanup`, `.classifier`), all regenerated automatically after a restore
 - Useful for backup or transferring to another session
 
 > **Tip:** Export your workspace before major experiments to create a restore point.
@@ -88,46 +88,40 @@ Click this button to export your entire workspace:
 The main file management area with upload controls, search, and file tree:
 
 ![Screenshot: File Browser interface sections labeled](/guides/file-browser-sections.png)
-*File Browser interface with header, category dropdown, upload button, and file tree*
+*File Browser interface with header, upload button, search bar and file tree*
 
 | UI Area | Description |
 |---------|-------------|
 | **Header** | Contains the refresh button and "Select All" checkbox |
-| **Category Dropdown** | Select the type of file you want to upload |
-| **Upload Button** | Triggers file upload (enabled after selecting category) |
+| **Upload Button** | Opens the file dialog; several files of different kinds at once |
 | **Search Bar** | Filter files by name, type, or category |
 | **File Tree** | Hierarchical view of all workspace folders and files |
 | **Batch Toolbar** | Appears when files are selected; provides bulk operations |
 
 #### Uploading Files
 
-Files must be uploaded with a category designation. The category determines where files are stored and how they can be used.
+There is nothing to choose before uploading: the workspace detects what each file is and files it accordingly.
 
-**Step 1: Select a Category**
+| File | Detected as | Stored under |
+|------|-------------|--------------|
+| `.tif`, `.tiff`, `.mrc` with few distinct integer values (at most 100) | Annotation | `uploads/annotations/` |
+| any other `.tif`, `.tiff`, `.mrc` | Raw image | `uploads/raw/` |
+| `.pth`, `.pt` | Model weights | `models/imported/` |
+| `.json` | Model config | `models/imported/` |
+| `.zip` containing a bioimage.io description (`rdf.yaml`) | bioimage.io package | `models/imported/` |
+| `.zip` containing a workspace manifest (`metadata.json`) | Workspace backup | opens the restore confirmation |
 
-Click the category dropdown and choose from:
-
-| Category | Accepted Files | Purpose |
-|----------|----------------|---------|
-| **Raw Images** | `.tif`, `.tiff`, `.mrc` | Source stacks for denoising, annotation, segmentation, or inference |
-| **Annotations** | `.tif`, `.tiff`, `.mrc` | Segmentation masks/labels for training |
-| **Model Files** | `.pth`, `.json` | Pre-trained model weights and config |
-| **Restore Workspace** | `.zip` | Restore a previously exported workspace |
-
-> **Note:** There is no separate inference category — images you want to run inference on are uploaded as Raw Images. MRC volumes are accepted wherever TIFFs are and can be worked with the same way.
-
-**Step 2: Upload Files**
+> **Note:** There is no separate inference category: images you want to run inference on are raw images. MRC volumes are converted to TIFF on import, voxel size included. Files keep their original names; a second file with the same name gets a numbered suffix.
 
 *Option A: Click Upload*
-1. Click the upload button (enabled after selecting category)
+1. Click the upload button
 2. Select one or more files from the file dialog
 3. Watch the progress bar as files upload
 
 *Option B: Drag and Drop*
-1. Select a category first (required)
-2. Drag files from your computer onto the sidebar
-3. The drop zone highlights when files are over it
-4. Release to begin upload
+1. Drag files from your computer onto the sidebar
+2. The drop zone highlights when files are over it
+3. Release to begin upload
 
 ![Screenshot: Drag and drop upload with highlighted drop zone](/guides/file-browser-drag-drop.png)
 *Drag and drop upload with the drop zone highlighted*
@@ -137,19 +131,23 @@ Click the category dropdown and choose from:
 During upload, you'll see:
 - A progress bar filling as each file uploads
 - Text showing: "Uploading X of Y: filename"
-- A success notification when complete
+- A notification naming each file and the kind it was filed as
 
-> **Note:** Maximum file size is 200MB per file. Account approval is required to upload custom files—pending users can only use test data.
+**Wrong guess?** A small 8-bit image with few grey levels can be taken for an annotation. Right-click the file and choose **Mark as raw image** (or **Mark as annotation**). Uploads made from inside a module (the Add button of a file selector) are filed as the kind that selector asks for.
+
+> **Note:** Images are limited to 200 MB per file, model files and packages to 2 GB, backups to 5 GB. Account approval is required to upload custom files; pending users can only use the built-in sample data.
 
 #### Restore Workspace from ZIP
 
 Replace your current workspace with a previously exported one.
 
-1. Select "Restore Workspace" from the category dropdown
-2. Select the ZIP file to upload
+1. Upload the workspace ZIP like any other file (button or drag and drop)
+2. The workspace recognises the backup and shows the restore confirmation
 3. **Read the warning**: This will delete all current files
-4. Click "Replace Workspace" to confirm
+4. Click "Replace Workspace" to confirm (Cancel discards the uploaded archive)
 5. Wait for extraction and restoration to complete
+
+Backups made by older versions of the workspace restore too; their manifest is upgraded on the fly.
 
 ![Screenshot: Restore workspace confirmation dialog](/guides/file-browser-restore-dialog.png)
 *Restore workspace confirmation dialog warning about file replacement*
@@ -162,28 +160,31 @@ Files are organized in a hierarchical folder structure:
 
 ```
 uploads/
-  ├── raw/              → Raw image stacks (TIFF/MRC)
-  ├── annotations/      → Training masks
-  └── imported_models/  → External models you upload
+  ├── raw/                    → Raw image stacks (TIFF/MRC), under their original names
+  └── annotations/            → Uploaded label masks
 models/
-  ├── segmentation/     → Trained segmentation models (per job)
-  └── denoising/        → Trained denoising models (per job)
+  ├── segmentation/train<n>/  → Trained segmentation models (best_model.pth, config, results)
+  ├── denoising/dn<n>/        → Trained denoising models
+  ├── imported/               → Model files you upload (.pth, .json, bioimage.io .zip)
+  └── bioimageio/             → export<n>/ (exported packages), zoo/<id>/ (model cards)
 results/
-  ├── segmentation/     → Segmentation outputs
-  ├── denoising/        → Denoising outputs
-  ├── meshes/           → Generated 3D meshes
-  ├── preprocess/       → Preprocessing outputs
-  ├── stitching/        → Stitching outputs
-  └── segcleanup/       → Segmentation cleanup outputs
+  ├── segmentation/seg<n>/    → Segmentation outputs
+  ├── denoising/filter<n>/    → Filter denoising outputs
+  ├── denoising/dn<n>/        → Deep-learning denoising outputs
+  ├── preprocess/prep<n>/     → Preprocessing outputs
+  ├── stitching/stitch<n>/    → Stitching outputs and recipes
+  ├── segcleanup/clean<n>/    → Segmentation cleanup outputs and reports
+  ├── meshes/mesh<n>/         → Generated 3D meshes
+  └── annotation/annot<n>/    → Annotations made in the Annotation module
 ```
 
-Per-job subfolders are created on demand as modules run, so you only see the ones that hold files.
+Every run gets a numbered folder (`seg1`, `seg2`, ...), counted per workspace in the order the runs were made. Inside a run folder the files carry the same names you see in the tree, so a downloaded backup reads the same way. Run folders are created on demand, so you only see the ones that hold files.
 
 **Expanding and Collapsing Folders**
 
 - Click the **arrow** (▶) next to a folder to expand it
 - Click again (▼) to collapse
-- Folders are sorted before files, alphabetically within each category
+- Folders are sorted before files; run folders in numeric order, files by name
 
 **Selecting Files**
 
@@ -228,27 +229,33 @@ Right-click any file to open the context menu:
 **Rename**
 
 - **How**: Right-click → Rename
-- **Dialog**: Enter the new display name
-- **Behavior**: Renaming changes the friendly name shown throughout the workspace only — the underlying file and its path are never touched, so lineage, downloads, and module references keep working
+- **Dialog**: The workspace's own dialog; enter the new display name (the extension must stay)
+- **Behavior**: Renaming changes the friendly name shown throughout the workspace only; the underlying file and its path are never touched, so lineage, downloads, and module references keep working
 
 > **Tip:** Use descriptive names that include the processing step or date for easier organization. Module outputs get readable, lineage-based display names automatically.
+
+**Mark as annotation / Mark as raw image**
+
+- **How**: Right-click an uploaded TIFF image
+- **Result**: The kind detected at upload is corrected; only the tags change
 
 **Delete**
 
 - **How**: Right-click → Delete
-- **Confirmation**: A dialog asks "Delete 'filename'? This action cannot be undone."
-- **Result**: File is permanently removed
+- **Confirmation**: A dialog names the file and the companion files that go with it (a model's config and results, an annotation's classes file, a result's info file)
+- **Result**: File and companions are permanently removed
 
 **View File Info**
 
 - **How**: Right-click → View Info
 - **Modal displays**:
-  - Filename and full path
+  - Name and full path (the path shows the run folder, e.g. `results/segmentation/seg3/`)
   - File size, category, and tags
   - Upload timestamp
   - **Voxel size** (TIFF stacks): read automatically on upload and inherited by derived outputs; click the edit (✏️) button to set x/y/z spacing and unit (µm, nm, mm)
   - File ID (for technical reference)
-  - **Processing History**: the lineage chain (Original Upload, Denoising, Segmentation, Mesh Generation, Preprocessing, Stitching, Segmentation Cleanup, Format Conversion, bioimage.io Export, Duplicated, Split)
+  - **Processing History**: the lineage chain (Original Upload, Denoising, Segmentation, Segmentation Training, Fine-tuning, Annotation, Mesh Generation, Preprocessing, Stitching, Segmentation Cleanup, Format Conversion, bioimage.io Export, bioimage.io Model, Duplicated, Split)
+  - **Model**: the model that produced a segmentation, a denoised stack, an exported package or a fine-tuned model
 
 ![Screenshot: File info modal showing metadata and processing history](/guides/file-browser-file-info.png)
 *File info modal displaying metadata and processing history*
@@ -268,14 +275,14 @@ Right-click any file to open the context menu:
 
 Packages a U-Net trained in the workspace as a [bioimage.io](https://bioimage.io) model (format 0.5) that other tools, the model zoo and the workspace itself can run. See [bioimage.io Export](/workspace/docs/modules/file-browser/bioimageio-export).
 
-- **How**: Right-click a `.pth` model file → Export as bioimage.io package…
+- **How**: Right-click a segmentation `.pth` model file → Export as bioimage.io package… (not offered for denoising models)
 - **Dialog**: package name, license (CC-BY-4.0, MIT, BSD-3-Clause or CC0-1.0) and a sample raw image; the training image is preselected when known
 
 ![Screenshot: bioimage.io export dialog with name, license and sample image](/guides/file-browser-bioimageio-export.png)
 *Export dialog for a model file; the status line shows the export stages*
 
 - **Stages**: loading, tracing to TorchScript, packaging, self-test of both weight formats (a few seconds for a small model)
-- **Result**: a zip under Model Files tagged `bioimageio`, with the model description, architecture file, state dict, TorchScript weights, test tensors, cover image and README. Select it in the Segmentation module under Step 1 → Use a bioimage.io Model to run it with tiled inference, or download it for other tools
+- **Result**: a zip under `models/bioimageio/export<n>/` tagged `bioimageio`, with the model description, architecture file, state dict, TorchScript weights, test tensors, cover image and README. Select it in the Segmentation module under Step 1 → Use a bioimage.io Model to run it with tiled inference, or download it for other tools
 
 
 #### TIFF Stack Operations
@@ -287,7 +294,7 @@ TIFF stacks have additional operations available in the context menu:
 Creates an exact copy of the TIFF stack.
 
 - **How**: Right-click → Duplicate Stack
-- **Result**: New file created as `originalname_copy.tif`
+- **Result**: New file created next to the original as `originalname_copy.tif`
 - **Use case**: Create a backup before processing, or create variants
 
 **Split Stack**
@@ -299,7 +306,7 @@ Divides a multi-slice TIFF into two separate files.
   - Enter the split point (slice number)
   - Preview shows resulting slice ranges
   - Option to delete original after split
-- **Result**: Creates `originalname_part1.tif` and `originalname_part2.tif`
+- **Result**: Creates `originalname_split_part1.tif` and `originalname_split_part2.tif`
 
 ![Screenshot: Split stack dialog showing slice range preview](/guides/file-browser-split-dialog.png)
 *Split stack dialog with slice range selector and preview*
@@ -353,19 +360,19 @@ The search bar filters files in real-time as you type.
 | Search Type | Example | Matches |
 |-------------|---------|---------|
 | **Filename** | `training` | Any file with "training" in the name |
-| **Category** | `seg` | Files in "segmentation_results" category |
-| **Keywords** | `mask` | Files categorized as annotations |
+| **Category** | `results` | Files in the results category |
+| **Keywords** | `mask` | Files tagged as annotations |
 | **Type** | `model` | Model files (.pth) |
 
 **Category Keywords:**
 - Raw images: `raw`, `image`, `input`
-- Annotations: `annotation`, `mask`, `label`
-- Models: `weights`, `model`, `pth`; config files: `config`
+- Annotations: `annotation`, `mask`, `label`; work in progress: `wip`, `unfinished`
+- Models: `weights`, `model`, `pth`; config files: `config`; bioimage.io packages and cards: `bioimageio`, `zoo`, `package`, `card`
 - Segmentation: `segmentation`, `segment`, `result`
-- Denoised: `denoising`, `denoised`, `clean`
+- Denoised: `denoising`, `denoised`
 - Meshes: `mesh`, `3d`, `surface`
-- Module outputs: `preprocess`, `stitching`, `segcleanup`; recipes: `recipe`; reports: `report`, `csv`
-- Test data: `test`
+- Module outputs: `preprocess`, `stitching`, `segcleanup`, `cleanup`; recipes: `recipe`; reports: `report`, `csv`; companion files: `info`, `metadata`
+- Sample data: `sample`, `demo`
 
 **Search Results View**
 
@@ -420,11 +427,11 @@ Switch between light and dark modes:
 
 | Issue | Cause | Solution |
 |-------|-------|----------|
-| Upload button disabled | No category selected | Select a category from the dropdown first |
-| "Account approval required" error | Pending user status | Wait for admin approval or use test data |
+| Image filed as annotation (or the other way round) | The content probe guessed wrong (few grey levels) | Right-click the file → Mark as raw image / Mark as annotation |
+| "Not uploaded: zip is neither a workspace backup nor a bioimage.io package" | Unknown archive | Only bioimage.io packages and workspace backups can be uploaded as zip |
+| "Account approval required" error | Pending user status | Wait for admin approval or use the sample data |
 | File not appearing after upload | Display not refreshed | Click the refresh button (🔄) |
-| Rename doesn't change the downloaded filename | Rename is display-name-only | Expected — the underlying file keeps its path; the display name is what the workspace shows |
-| Drag-and-drop not working | No category selected | Select a category before dragging files |
+| Downloaded file has the display name, not the name in the backup | Downloads use the display name | Expected; the backup keeps the on-disk names |
 | Split Stack not available | Single-slice TIFF | Option only appears for multi-slice stacks |
 | Search not finding file | Spelling or category | Try different keywords or clear search |
 
